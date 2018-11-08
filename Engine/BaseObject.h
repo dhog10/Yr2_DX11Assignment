@@ -14,6 +14,7 @@ private:
 	const char* pMaterialPath2;
 
 	D3DClass* pD3DClass;
+	BaseObject* pParent;
 public:
 	BaseObject(const char* Name, int ID, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2);
 	~BaseObject();
@@ -26,6 +27,9 @@ public:
 	const char* GetMaterialPath();
 	void SetNormalPath(const char*);
 	const char* GetNormalPath();
+	void SetParent(BaseObject* pParent);
+	BaseObject* GetParent();
+	XMMATRIX GetWorldPosition(XMMATRIX origin);
 
 	const char* GetName();
 	int GetID();
@@ -39,6 +43,8 @@ public:
 	void OnRender(float);
 	void OnCreate();
 	void OnDestroy();
+
+	bool bRotateFirst;
 
 	BumpModelClass* pModelClass;
 

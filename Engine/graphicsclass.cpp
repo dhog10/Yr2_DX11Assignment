@@ -254,6 +254,7 @@ bool GraphicsClass::Render(float rotation)
 	m_Camera->Render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
+	
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
@@ -266,7 +267,7 @@ bool GraphicsClass::Render(float rotation)
 	worldMatrix = XMMatrixMultiply(worldMatrix2, worldMatrix);
 
 	// Render the first model using the texture shader.
-	m_Model1->Render(m_D3D->GetDeviceContext());
+	//m_Model1->Render(m_D3D->GetDeviceContext());
 	/*result = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), m_Model1->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
 												  m_Model1->GetTexture());*/
 
@@ -286,10 +287,10 @@ bool GraphicsClass::Render(float rotation)
 	worldMatrix = XMMatrixMultiply(worldMatrix, translateMatrix);
 
 	// Render the second model using the light shader.
-	m_Model2->Render(m_D3D->GetDeviceContext());
-	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
+	//m_Model2->Render(m_D3D->GetDeviceContext());
+	/*result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
 									   m_Model2->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), 
-									   m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+									   m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());*/
 	if(!result)
 	{
 		return false;
@@ -302,10 +303,10 @@ bool GraphicsClass::Render(float rotation)
 	worldMatrix = XMMatrixMultiply(worldMatrix, translateMatrix);
 
 	// Render the third model using the bump map shader.
-	m_Model3->Render(m_D3D->GetDeviceContext());
-	result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), m_Model3->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
+	//m_Model3->Render(m_D3D->GetDeviceContext());
+	/*result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), m_Model3->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
 												  m_Model3->GetColorTexture(), m_Model3->GetNormalMapTexture(), m_Light->GetDirection(), 
-												  m_Light->GetDiffuseColor());
+												  m_Light->GetDiffuseColor());*/
 	if(!result)
 	{
 		return false;
@@ -324,11 +325,15 @@ bool GraphicsClass::Render(float rotation)
 			objects[i]->pPosition->y += objects[i]->pVelocity->y * DeltaTime;
 			objects[i]->pPosition->z += objects[i]->pVelocity->z * DeltaTime;
 
+			objects[i]->pAngle->x += objects[i]->pAngularVelocity->x * DeltaTime;
+			objects[i]->pAngle->y += objects[i]->pAngularVelocity->y * DeltaTime;
+			objects[i]->pAngle->z += objects[i]->pAngularVelocity->z * DeltaTime;
+
 			// Reset worldMatrix to origin
 			m_D3D->GetWorldMatrix(worldMatrix);
 
 			// Translate matrix using objects xyz (pyr) angle values
-			if (object->pAngle->x != 0.f) {
+			/*if (object->pAngle->x != 0.f) {
 				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->x);
 			}
 			if (object->pAngle->y != 0.f) {
@@ -339,8 +344,9 @@ bool GraphicsClass::Render(float rotation)
 			}
 			
 			// Translate matrix using objects xyz position values
-			worldMatrix = XMMatrixTranslation(object->pPosition->x, object->pPosition->y, object->pPosition->z);
+			worldMatrix = XMMatrixTranslation(object->pPosition->x, object->pPosition->y, object->pPosition->z);*/
 
+			worldMatrix = object->GetWorldPosition(worldMatrix);
 
 			// Render the object to scene
 			pModelClass->Render(m_D3D->GetDeviceContext());

@@ -16,6 +16,9 @@ BaseObject::BaseObject(const char* Name, int ID, const char* ModelPath, const ch
 	this->pModelPath = ModelPath;
 	this->pMaterialPath = MaterialPath;
 	this->pMaterialPath2 = MaterialPath2;
+
+	pParent = 0;
+	bRotateFirst = true;
 }
 
 void BaseObject::Initialize(D3DClass* pD3DClass) {
@@ -114,4 +117,64 @@ void BaseObject::SetNormalPath(const char* NormalPath) {
 
 const char* BaseObject::GetNormalPath() {
 	return pMaterialPath2;
+}
+
+void BaseObject::SetParent(BaseObject* pParent) {
+	this->pParent = pParent;
+}
+
+BaseObject* BaseObject::GetParent() {
+	return pParent;
+}
+
+XMMATRIX TransformRotation(XMMATRIX* pMatrix, XMFLOAT3* pAngle) {
+	XMMATRIX Matrix = *pMatrix;
+
+	if (pAngle->x != 0.f) {
+		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationX(pAngle->x));
+	}
+	if (pAngle->y != 0.f) {
+		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationY(pAngle->y));
+	}
+	if (pAngle->z != 0.f) {
+		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationZ(pAngle->z));
+	}
+
+	return Matrix;
+}
+
+XMMATRIX TransformPosition(XMMATRIX* pMatrix, XMFLOAT3* pPosition) {
+	XMMATRIX Matrix = *pMatrix;
+
+	Matrix = XMMatrixMultiply(Matrix, XMMatrixTranslation(pPosition->x, pPosition->y, pPosition->z));
+
+	return Matrix;
+}
+
+XMMATRIX BaseObject::GetWorldPosition(XMMATRIX origin) {
+	//if (true) { return origin; }
+
+	if (bRotateFirst) {
+		origin = TransformRotation(&origin, pAngle);
+
+		if (pParent) {
+			origin = pParent->GetWorldPosition(origin);
+		}
+
+		origin = TransformPosition(&origin, pPosition);
+	}
+	else {
+		XMMATRIX LocalOriginMatrix = TransformPosition(&origin, pPosition);
+
+		origin = TransformRotation(&LocalOriginMatrix, pAngle);
+
+		if (pParent) {
+			origin = pParent->GetWorldPosition(origin);
+		}
+
+		origin = TransformPosition(&origin, pPosition);
+		
+	}
+
+	return origin;
 }
