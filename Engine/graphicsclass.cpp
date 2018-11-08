@@ -2,7 +2,9 @@
 // Filename: graphicsclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "graphicsclass.h"
-
+#include <ctime>
+#include <chrono>
+#include <cstdint>
 
 GraphicsClass::GraphicsClass()
 {
@@ -26,7 +28,7 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, World* pWorld)
 {
 	bool result;
 
@@ -132,6 +134,23 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Assign private world variable
+	this->pWorld = pWorld;
+
+	if (!pWorld) {
+		MessageBox(hwnd, L"pWorld class pointer null", L"Error", MB_OK);
+		return false;
+	}
+
+	std::vector<BaseObject*> objects = *pWorld->GetObjects();
+	for (int i = 0; i < objects.size(); i++) {
+		BaseObject* pObject = objects[i];
+
+		pObject->Initialize(m_D3D);
+	}
+
+	LastTime = timeGetTime();
+
 	return true;
 }
 
@@ -220,6 +239,10 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::Render(float rotation)
 {
+	double CurTime = timeGetTime();
+	float DeltaTime = (double)(CurTime - LastTime) / 1000.f;
+	LastTime = timeGetTime();
+
 	XMMATRIX worldMatrix, worldMatrix2, viewMatrix, projectionMatrix, translateMatrix;
 	bool result;
 
@@ -286,6 +309,45 @@ bool GraphicsClass::Render(float rotation)
 	if(!result)
 	{
 		return false;
+	}
+
+	if (pWorld) {
+		std::vector<BaseObject*> objects = *pWorld->GetObjects();
+
+		for (int i = 0; i < objects.size(); i++) {
+			BaseObject* object = objects[i];
+
+			BumpModelClass* pModelClass = object->pModelClass;
+			if (!pModelClass) { continue; }
+
+			objects[i]->pPosition->x += objects[i]->pVelocity->x * DeltaTime;
+			objects[i]->pPosition->y += objects[i]->pVelocity->y * DeltaTime;
+			objects[i]->pPosition->z += objects[i]->pVelocity->z * DeltaTime;
+
+			// Reset worldMatrix to origin
+			m_D3D->GetWorldMatrix(worldMatrix);
+
+			// Translate matrix using objects xyz (pyr) angle values
+			if (object->pAngle->x != 0.f) {
+				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->x);
+			}
+			if (object->pAngle->y != 0.f) {
+				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->y);
+			}
+			if (object->pAngle->z != 0.f) {
+				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->z);
+			}
+			
+			// Translate matrix using objects xyz position values
+			worldMatrix = XMMatrixTranslation(object->pPosition->x, object->pPosition->y, object->pPosition->z);
+
+
+			// Render the object to scene
+			pModelClass->Render(m_D3D->GetDeviceContext());
+			result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+				pModelClass->GetColorTexture(), pModelClass->GetNormalMapTexture(), m_Light->GetDirection(),
+				m_Light->GetDiffuseColor());
+		}
 	}
 
 	// Present the rendered scene to the screen.

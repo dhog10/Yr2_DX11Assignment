@@ -39,7 +39,7 @@ public:
 	void Shutdown();
 	void Run();
 
-	World* WorldObject;
+	World* pWorldObject;
 
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 

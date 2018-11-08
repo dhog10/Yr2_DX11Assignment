@@ -14,12 +14,12 @@
 #include "lightclass.h"
 #include "modelclass.h"
 #include "bumpmodelclass.h"
-
+#include "World.h"
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -35,7 +35,7 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND);
+	bool Initialize(int, int, HWND, World*);
 	void Shutdown();
 	bool Frame();
 
@@ -50,6 +50,9 @@ private:
 	ModelClass* m_Model1;
 	ModelClass* m_Model2;
 	BumpModelClass* m_Model3;
+	World* pWorld;
+
+	double LastTime;
 };
 
 #endif

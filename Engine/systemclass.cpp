@@ -9,7 +9,7 @@ SystemClass::SystemClass()
 	m_Input = 0;
 	m_Graphics = 0;
 
-	WorldObject = new World();
+	pWorldObject = new World();
 }
 
 
@@ -20,6 +20,7 @@ SystemClass::SystemClass(const SystemClass& other)
 
 SystemClass::~SystemClass()
 {
+	delete pWorldObject;
 }
 
 
@@ -54,7 +55,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, pWorldObject);
 	if(!result)
 	{
 		return false;

@@ -5,9 +5,11 @@
 World::World()
 {
 	CurrentID = 0;
-	Objects = new std::vector<BaseObject>();
+	Objects = new std::vector<BaseObject*>();
 
-	BaseObject* TestObject = CreateObject<BaseObject>("Test Object");
+	BaseObject* TestObject = CreateObject<BaseObject>("Test Object", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
+	TestObject->pPosition = new XMFLOAT3(0, 40, 100);
+	TestObject->pVelocity->x = 10.f;
 }
 
 
@@ -16,34 +18,34 @@ World::~World()
 	delete Objects;
 }
 
-std::vector<BaseObject>* World::GetObjects()
+std::vector<BaseObject*>* World::GetObjects()
 {
 	return Objects;
 }
 
 template<class T>
-T* World::CreateObject(const char* Name)
+T* World::CreateObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2)
 {
-	T* Object = new T(Name, CurrentID);
+	T* pObject = new T(Name, CurrentID, ModelPath, MaterialPath, MaterialPath2);
 	CurrentID++;
 
 	// Add to object array & call create functions
-	Objects->push_back((BaseObject)*Object);
+	Objects->push_back((BaseObject*)pObject);
 
-	Object->OnCreate();
+	pObject->OnCreate();
 
-	return Object;
+	return pObject;
 }
 
-void World::DestroyObject(BaseObject* Object)
+void World::DestroyObject(BaseObject* pObject)
 {
 	// Remove from object array & call destroy functions
-	std::vector<BaseObject>::iterator index = std::find(Objects->begin(), Objects->end(), *Object);
+	std::vector<BaseObject*>::iterator index = std::find(Objects->begin(), Objects->end(), pObject);
 	if (index != Objects->end()) {
 		Objects->erase(index);
 	}
 
-	Object->OnDestroy();
+	pObject->OnDestroy();
 
-	delete Object;
+	delete pObject;
 }
