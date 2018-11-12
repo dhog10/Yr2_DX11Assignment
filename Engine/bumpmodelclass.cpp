@@ -240,7 +240,7 @@ void BumpModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	return;
 }
@@ -383,7 +383,7 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 
 			double x = ::atof(stemp[1].c_str());
 			double y = ::atof(stemp[2].c_str());
-			double z = ::atof(stemp[3].c_str());
+			double z = ::atof(stemp[3].c_str()) * -1.0f;
 
 			XMFLOAT3 vert = XMFLOAT3(x, y, z);
 			verts.push_back(vert);
@@ -391,7 +391,7 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 		else if (stemp[0] == "vt") {
 			// Read uv
 			double x = ::atof(stemp[1].c_str());
-			double y = ::atof(stemp[2].c_str());
+			double y = 1.0f - ::atof(stemp[2].c_str());
 
 			XMFLOAT2 uv = XMFLOAT2(x, y);
 			uvs.push_back(uv);
@@ -401,7 +401,7 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 
 			double x = ::atof(stemp[1].c_str());
 			double y = ::atof(stemp[2].c_str());
-			double z = ::atof(stemp[3].c_str());
+			double z = ::atof(stemp[3].c_str()) * -1.0f;
 
 			XMFLOAT3 normal = XMFLOAT3(x, y, z);
 			normals.push_back(normal);
@@ -417,26 +417,28 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 			std::string face2 = stemp[2];
 			std::string face3 = stemp[3];
 
+			int indexOffset = -1;
+
 			SplitString(&face1, &stemp, '/', 0);
-			v1.v = std::stoi(stemp[0]) - 1;
-			v1.vt = std::stoi(stemp[1]) - 1;
-			v1.vn = std::stoi(stemp[2]) - 1;
+			v1.v = std::stoi(stemp[0]) + indexOffset;
+			v1.vt = std::stoi(stemp[1]) + indexOffset;
+			v1.vn = std::stoi(stemp[2]) + indexOffset;
 
 			SplitString(&face2, &stemp, '/', 0);
-			v2.v = std::stoi(stemp[0]) - 1;
-			v2.vt = std::stoi(stemp[1]) - 1;
-			v2.vn = std::stoi(stemp[2]) - 1;
+			v2.v = std::stoi(stemp[0]) + indexOffset;
+			v2.vt = std::stoi(stemp[1]) + indexOffset;
+			v2.vn = std::stoi(stemp[2]) + indexOffset;
 
 			SplitString(&face3, &stemp, '/', 0);
-			v3.v = std::stoi(stemp[0]) - 1;
-			v3.vt = std::stoi(stemp[1]) - 1;
-			v3.vn = std::stoi(stemp[2]) - 1;
+			v3.v = std::stoi(stemp[0]) + indexOffset;
+			v3.vt = std::stoi(stemp[1]) + indexOffset;
+			v3.vn = std::stoi(stemp[2]) + indexOffset;
 
 			face.v1 = v1;
 			face.v2 = v2;
 			face.v3 = v3;
 
-			faces.push_back(face);
+			faces.insert(faces.begin(), face);
 		}
 	}
 
@@ -445,7 +447,7 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 	m_model = new ModelType[m_vertexCount];
 
 	// Load face data into model
-	for (int i = 0; i < m_vertexCount; i++) {
+	for (int i = m_vertexCount - 1; i >= 0 ; i--) {
 		TriFace face = faces[i];
 
 		LoadFaceToModel(i, verts[face.v1.v], uvs[face.v1.vt], normals[face.v1.vn]);

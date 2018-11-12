@@ -11,7 +11,7 @@ World::World()
 
 	BaseObject* TestObject = CreateObject<BaseObject>("Test Object", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
 	TestObject->pPosition = new XMFLOAT3(0, 30, 100);
-	TestObject->pVelocity->x = 3.f;
+	//TestObject->pVelocity->x = 3.f;
 
 	/*BaseObject* TestChild = CreateObject<BaseObject>("Test Child", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
 	TestChild->pPosition = new XMFLOAT3(0, 5, 0);
@@ -25,10 +25,11 @@ World::World()
 	TestChild2->pAngularVelocity = new XMFLOAT3(0, 5, 0);
 	TestChild2->bRotateFirst = false;*/
 
-	StellarBody* Planet = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
+	StellarBody* Planet = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
 	Planet->SetParent(TestObject);
 	Planet->OrbitDistance = 15.f;
-	Planet->OrbitSpeed = 50.f;
+	Planet->OrbitSpeed = 0.f;
+	Planet->pAngularVelocity->y = 0.5f;
 	
 	StellarBody* Planet2 = CreateObject<StellarBody>("Test planet 2", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
 	Planet2->SetParent(Planet);
