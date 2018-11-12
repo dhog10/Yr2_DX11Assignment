@@ -239,8 +239,17 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::Render(float rotation)
 {
+	// Keyboard input
+
+	if (GetAsyncKeyState('A')) {
+
+	}
+
+	m_Camera->SetPosition(pWorld->pCameraPosition->x, pWorld->pCameraPosition->y, pWorld->pCameraPosition->z);
+
+	////////////////////
 	double CurTime = timeGetTime();
-	float DeltaTime = (double)(CurTime - LastTime) / 1000.f;
+	float DeltaTime = (CurTime - LastTime) / 1000.f;
 	LastTime = timeGetTime();
 
 	XMMATRIX worldMatrix, worldMatrix2, viewMatrix, projectionMatrix, translateMatrix;
@@ -328,6 +337,8 @@ bool GraphicsClass::Render(float rotation)
 			objects[i]->pAngle->x += objects[i]->pAngularVelocity->x * DeltaTime;
 			objects[i]->pAngle->y += objects[i]->pAngularVelocity->y * DeltaTime;
 			objects[i]->pAngle->z += objects[i]->pAngularVelocity->z * DeltaTime;
+
+			objects[i]->OnRender(DeltaTime);
 
 			// Reset worldMatrix to origin
 			m_D3D->GetWorldMatrix(worldMatrix);

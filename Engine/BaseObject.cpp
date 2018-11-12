@@ -1,11 +1,9 @@
 #include "BaseObject.h"
+#include "World.h"
 
-
-
-BaseObject::BaseObject(const char* Name, int ID, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2)
+BaseObject::BaseObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2)
 {
 	this->Name = Name;
-	this->ID = ID;
 	pScale = new XMFLOAT3(0.f, 0.f, 0.f);
 	pPosition = new XMFLOAT3(0.f, 0.f, 0.f);
 	pVelocity = new XMFLOAT3(0.f, 0.f, 0.f);
@@ -17,12 +15,16 @@ BaseObject::BaseObject(const char* Name, int ID, const char* ModelPath, const ch
 	this->pMaterialPath = MaterialPath;
 	this->pMaterialPath2 = MaterialPath2;
 
+	pD3DClass = 0;
 	pParent = 0;
 	bRotateFirst = true;
+	Initialized = false;
 }
 
 void BaseObject::Initialize(D3DClass* pD3DClass) {
 	this->pD3DClass = pD3DClass;
+
+	Initialized = true;
 
 	if (pModelPath) {
 		SetModelPath(pModelPath);
@@ -63,13 +65,15 @@ int BaseObject::GetID() {
 
 void BaseObject::OnRender(float DeltaTime)
 {
-	pPosition->x += pVelocity->x * DeltaTime;
+	// Moved position & angle manipulation to graphicsclass
+
+	/*pPosition->x += pVelocity->x * DeltaTime;
 	pPosition->y += pVelocity->y * DeltaTime;
 	pPosition->z += pVelocity->z * DeltaTime;
 
 	pAngle->x += pAngularVelocity->x * DeltaTime;
 	pAngle->y += pAngularVelocity->y * DeltaTime;
-	pAngle->z += pAngularVelocity->z * DeltaTime;
+	pAngle->z += pAngularVelocity->z * DeltaTime;*/
 }
 
 void BaseObject::OnCreate()
@@ -90,7 +94,7 @@ bool BaseObject::operator==(BaseObject other)
 void BaseObject::SetModelPath(const char* ModelPath) {
 	this->pModelPath = ModelPath;
 
-	if (!pD3DClass) { return; }
+	if (!Initialized) { return; }
 
 	pModelClass = new BumpModelClass;
 
@@ -151,30 +155,27 @@ XMMATRIX TransformPosition(XMMATRIX* pMatrix, XMFLOAT3* pPosition) {
 	return Matrix;
 }
 
-XMMATRIX BaseObject::GetWorldPosition(XMMATRIX origin) {
-	//if (true) { return origin; }
+XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject) {
+	XMMATRIX origin = *pOrigin;
+	XMFLOAT3* pAngle = pObject->pAngle;
+	XMFLOAT3* pPosition = pObject->pPosition;
 
-	if (bRotateFirst) {
+	if (pObject->bRotateFirst) {
 		origin = TransformRotation(&origin, pAngle);
-
-		if (pParent) {
-			origin = pParent->GetWorldPosition(origin);
-		}
-
 		origin = TransformPosition(&origin, pPosition);
 	}
 	else {
-		XMMATRIX LocalOriginMatrix = TransformPosition(&origin, pPosition);
-
-		origin = TransformRotation(&LocalOriginMatrix, pAngle);
-
-		if (pParent) {
-			origin = pParent->GetWorldPosition(origin);
-		}
-
+		origin = TransformRotation(&origin, pAngle);
 		origin = TransformPosition(&origin, pPosition);
-		
+	}
+
+	if (pObject->GetParent() != 0) {
+		origin = CalculateWorldPosition(&origin, pObject->GetParent());
 	}
 
 	return origin;
+}
+
+XMMATRIX BaseObject::GetWorldPosition(XMMATRIX origin) {
+	return CalculateWorldPosition(&origin, this);
 }

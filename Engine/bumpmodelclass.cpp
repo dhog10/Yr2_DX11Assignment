@@ -1,8 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: bumpmodelclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "bumpmodelclass.h"
 
+#include <iostream>
+#include <string>
+#include <vector>
+#include "bumpmodelclass.h"
 
 BumpModelClass::BumpModelClass()
 {
@@ -28,12 +31,26 @@ bool BumpModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR
 {
 	bool result;
 
+	int modelLen = strlen(modelFilename);
+	modelLen -= 3;
+	
+	std::string model = modelFilename;
 
-	// Load in the model data,
-	result = LoadModel(modelFilename);
-	if(!result)
-	{
-		return false;
+	if (model.substr(model.size() - 4, 4) == ".obj") {
+		// Load in the model data,
+		result = LoadModelOBJ(modelFilename);
+		if (!result)
+		{
+			return false;
+		}
+	}
+	else {
+		// Load in the model data,
+		result = LoadModel(modelFilename);
+		if (!result)
+		{
+			return false;
+		}
 	}
 
 	// Calculate the tangent and binormal vectors for the model.
@@ -286,6 +303,158 @@ void BumpModelClass::ReleaseTextures()
 	return;
 }
 
+void SplitString(std::string* in, std::vector<std::string>* out, char token, int startFind) {
+	int curFind = 0;
+	int lastIndexLen = 0;
+
+	out->clear();
+
+	for (int i = 0; i < in->length(); i++) {
+		char cur = in->at(i);
+
+		if (cur == token || i == in->length() - 1) {
+			curFind++;
+
+			if (curFind > startFind && lastIndexLen >= 0) {
+				int len = lastIndexLen;
+				if (i == in->length() - 1) {
+					len++;
+				}
+
+				std::string sub = in->substr(i - lastIndexLen, len);
+				if (sub != "") {
+					out->push_back(sub);
+				}
+			}
+
+			lastIndexLen = 0;
+		}
+		else {
+			lastIndexLen++;
+		}
+	}
+}
+
+void BumpModelClass::LoadFaceToModel(int i, XMFLOAT3 vert, XMFLOAT2 uv, XMFLOAT3 normal) {
+	m_model[i].x = vert.x;
+	m_model[i].y = vert.y;
+	m_model[i].z = vert.z;
+
+	m_model[i].tu = uv.x;
+	m_model[i].tv = uv.y;
+
+	m_model[i].nx = normal.x;
+	m_model[i].ny = normal.y;
+	m_model[i].nz = normal.z;
+}
+
+// Function to parse obj files
+bool BumpModelClass::LoadModelOBJ(char* filename)
+{
+	ifstream fin;
+	char input;
+	int i;
+	string line;
+	std::vector<XMFLOAT3> verts;
+	std::vector<XMFLOAT2> uvs;
+	std::vector<XMFLOAT3> normals;
+	std::vector<TriFace> faces;
+
+	std::vector<std::string> stemp;
+
+	// Open the model file.  If it could not open the file then exit.
+	fin.open(filename);
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	// Read up to end of file comments
+	while (getline(fin, line)) {
+		if (line.length() == 0) { continue; }
+		if (line.at(0) == '#') { continue; }
+
+		SplitString(&line, &stemp, ' ', 0);
+
+		if (stemp.size() == 0) { continue; }
+
+		if (stemp[0] == "v") {
+			// Read vertex
+
+			double x = ::atof(stemp[1].c_str());
+			double y = ::atof(stemp[2].c_str());
+			double z = ::atof(stemp[3].c_str());
+
+			XMFLOAT3 vert = XMFLOAT3(x, y, z);
+			verts.push_back(vert);
+		}
+		else if (stemp[0] == "vt") {
+			// Read uv
+			double x = ::atof(stemp[1].c_str());
+			double y = ::atof(stemp[2].c_str());
+
+			XMFLOAT2 uv = XMFLOAT2(x, y);
+			uvs.push_back(uv);
+		}
+		else if (stemp[0] == "vn") {
+			// Read normal
+
+			double x = ::atof(stemp[1].c_str());
+			double y = ::atof(stemp[2].c_str());
+			double z = ::atof(stemp[3].c_str());
+
+			XMFLOAT3 normal = XMFLOAT3(x, y, z);
+			normals.push_back(normal);
+		}
+		else if (stemp[0] == "f") {
+			// Read face
+			// f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ...
+
+			TriFace face;
+			FaceVertex v1, v2, v3;
+
+			std::string face1 = stemp[1];
+			std::string face2 = stemp[2];
+			std::string face3 = stemp[3];
+
+			SplitString(&face1, &stemp, '/', 0);
+			v1.v = std::stoi(stemp[0]) - 1;
+			v1.vt = std::stoi(stemp[1]) - 1;
+			v1.vn = std::stoi(stemp[2]) - 1;
+
+			SplitString(&face2, &stemp, '/', 0);
+			v2.v = std::stoi(stemp[0]) - 1;
+			v2.vt = std::stoi(stemp[1]) - 1;
+			v2.vn = std::stoi(stemp[2]) - 1;
+
+			SplitString(&face3, &stemp, '/', 0);
+			v3.v = std::stoi(stemp[0]) - 1;
+			v3.vt = std::stoi(stemp[1]) - 1;
+			v3.vn = std::stoi(stemp[2]) - 1;
+
+			face.v1 = v1;
+			face.v2 = v2;
+			face.v3 = v3;
+
+			faces.push_back(face);
+		}
+	}
+
+	m_vertexCount = faces.size();
+	m_indexCount = m_vertexCount;
+	m_model = new ModelType[m_vertexCount];
+
+	// Load face data into model
+	for (int i = 0; i < m_vertexCount; i++) {
+		TriFace face = faces[i];
+
+		LoadFaceToModel(i, verts[face.v1.v], uvs[face.v1.vt], normals[face.v1.vn]);
+		LoadFaceToModel(i, verts[face.v2.v], uvs[face.v2.vt], normals[face.v2.vn]);
+		LoadFaceToModel(i, verts[face.v3.v], uvs[face.v3.vt], normals[face.v3.vn]);
+	}
+
+	return true;
+}
 
 bool BumpModelClass::LoadModel(char* filename)
 {

@@ -17,6 +17,8 @@ public:
 	template<class T>
 	T* CreateObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2);
 
+	XMFLOAT3* pCameraPosition;
+
 	void DestroyObject(BaseObject*);
 };
 

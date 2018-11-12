@@ -7,7 +7,6 @@ class BaseObject
 {
 private:
 	const char* Name;
-	int ID;
 
 	const char* pModelPath;
 	const char* pMaterialPath;
@@ -15,9 +14,13 @@ private:
 
 	D3DClass* pD3DClass;
 	BaseObject* pParent;
+
+	bool Initialized;
 public:
-	BaseObject(const char* Name, int ID, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2);
+	BaseObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2);
 	~BaseObject();
+
+	int ID;
 
 	void Initialize(D3DClass* pD3DClass);
 
@@ -40,7 +43,7 @@ public:
 	XMFLOAT3 * pAngle;
 	XMFLOAT3 * pAngularVelocity;
 
-	void OnRender(float);
+	virtual void OnRender(float DeltaTime);
 	void OnCreate();
 	void OnDestroy();
 

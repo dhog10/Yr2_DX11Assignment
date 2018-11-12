@@ -21,6 +21,17 @@ using namespace std;
 ///////////////////////
 #include "textureclass.h"
 
+struct FaceVertex {
+	int v;
+	int vt;
+	int vn;
+};
+
+struct TriFace {
+	FaceVertex v1;
+	FaceVertex v2;
+	FaceVertex v3;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: BumpModelClass
@@ -80,6 +91,8 @@ private:
 	void ReleaseTextures();
 
 	bool LoadModel(char*);
+	bool LoadModelOBJ(char*);
+	void LoadFaceToModel(int, XMFLOAT3, XMFLOAT2, XMFLOAT3);
 	void ReleaseModel();
 
 	void CalculateModelVectors();
