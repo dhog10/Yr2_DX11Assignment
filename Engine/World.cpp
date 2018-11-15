@@ -8,43 +8,46 @@ World::World()
 	Objects = new std::vector<BaseObject*>();
 
 	pCameraPosition = new XMFLOAT3(0.f, 0.f, -10.f);
+	pCameraAngle = new XMFLOAT3(0.f, 0.f, 0.f);
+	pSkySphereMaterial = L"../Engine/data/skysphere1.dds";
 
-	BaseObject* TestObject = CreateObject<BaseObject>("Test Object", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
-	TestObject->pPosition = new XMFLOAT3(0, 30, 100);
-	//TestObject->pVelocity->x = 3.f;
+	StellarBody* SkySphere = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/skysphere1.dds", L"../Engine/data/sun.dds");
+	SkySphere->renderShader = RenderShader::UNLIT;
+	SkySphere->pScale = new XMFLOAT3(-50.f, -50.f, -50.f);
+	SkySphere->pAngle = new XMFLOAT3(0.f, 50.f, 0.f);
 
-	/*BaseObject* TestChild = CreateObject<BaseObject>("Test Child", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
-	TestChild->pPosition = new XMFLOAT3(0, 5, 0);
-	TestChild->SetParent(TestObject);
-	TestChild->pAngularVelocity = new XMFLOAT3(0, 0, 2);
-	TestChild->bRotateFirst = false;
-
-	BaseObject* TestChild2 = CreateObject<BaseObject>("Test Child 2", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
-	TestChild2->pPosition = new XMFLOAT3(0, 3, 0);
-	TestChild2->SetParent(TestChild);
-	TestChild2->pAngularVelocity = new XMFLOAT3(0, 5, 0);
-	TestChild2->bRotateFirst = false;*/
-
-	StellarBody* Planet = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
-	Planet->SetParent(TestObject);
-	Planet->OrbitDistance = 15.f;
-	Planet->OrbitSpeed = 0.f;
-	Planet->bDontTransformParentRotation = true;
-	//Planet->pAngularVelocity->y = 0.5f;
+	StellarBody* Sun = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/sun.dds", L"../Engine/data/sun.dds");
+	Sun->pOriginPosition = new XMFLOAT3(0.f, 0, 100.f);
+	Sun->bDontTransformParentRotation = true;
+	Sun->pAngularVelocity->y = 0.3f;
+	Sun->renderShader = RenderShader::UNLIT;
 	
-	StellarBody* Planet2 = CreateObject<StellarBody>("Test planet 2", "../Engine/data/sphere_hd.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
-	Planet2->SetParent(Planet);
-	Planet2->OrbitDistance = 50.f;
-	Planet2->OrbitSpeed = 85.f;
-	Planet2->pAngularVelocity->y = 10.f;
-	Planet2->bDontTransformParentRotation = true;
+	pLightingOrigin = Sun->pOriginPosition;
 
-	StellarBody* Planet3 = CreateObject<StellarBody>("Test planet 3", "../Engine/data/sphere_hd.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
-	Planet3->SetParent(Planet2);
-	Planet3->OrbitDistance = 40.f;
-	Planet3->OrbitSpeed = 235.f;
+	StellarBody* Earth = CreateObject<StellarBody>("Earth", "../Engine/data/sphere_hd.obj", L"../Engine/data/earth.dds", L"../Engine/data/white.dds");
+	Earth->SetParent(Sun);
+	Earth->OrbitDistance = 50.f;
+	Earth->OrbitSpeed = 5.f;
+	Earth->CurrentOrbigDegree = 200.f;
+	Earth->pAngularVelocity->y = 0.3f;
+	Earth->bDontTransformParentRotation = true;
+	Earth->pScale = new XMFLOAT3(0.3f, 0.3f, 0.3f);
+
+	StellarBody* Moon = CreateObject<StellarBody>("Moon", "../Engine/data/sphere_hd.obj", L"../Engine/data/moon.dds", L"../Engine/data/white.dds");
+	Moon->SetParent(Earth);
+	Moon->OrbitDistance = 25.f;
+	Moon->OrbitSpeed = 9.f;
+	Moon->CurrentOrbigDegree = 100.f;
+	Moon->pAngularVelocity->y = 0.8f;
+	Moon->bDontTransformParentRotation = true;
+	Moon->pScale = new XMFLOAT3(0.05f, 0.05f, 0.05f);
+
+	/*StellarBody* Planet3 = CreateObject<StellarBody>("Test planet 3", "../Engine/data/sphere_hd.obj", L"../Engine/data/stone.dds", L"../Engine/data/normal.dds");
+	Planet3->SetParent(Earth);
+	Planet3->OrbitDistance = 15.f;
+	Planet3->OrbitSpeed = 0.4f;
 	Planet3->bDontTransformParentRotation = true;
-	
+	Planet3->pScale = new XMFLOAT3(0.05f, 0.05f, 0.05f);*/
 }
 
 
@@ -59,7 +62,7 @@ std::vector<BaseObject*>* World::GetObjects()
 }
 
 template<class T>
-T* World::CreateObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2)
+T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 {
 	T* pObject = new T(Name, ModelPath, MaterialPath, MaterialPath2);
 	pObject->ID = CurrentID;

@@ -2,13 +2,14 @@
 #include <math.h>
 
 
-StellarBody::StellarBody(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2)
+StellarBody::StellarBody(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 	: BaseObject(Name, ModelPath, MaterialPath, MaterialPath2)
 {
 	SetModelPath(ModelPath);
 	SetMaterialPath(MaterialPath);
 	SetNormalPath(MaterialPath2);
 
+	pOriginPosition = new XMFLOAT3(0.f, 0.f, 0.f);
 
 	CurrentOrbigDegree = 0.f;
 	OrbitSpeed = 0.f;
@@ -25,5 +26,5 @@ void StellarBody::OnRender(float DeltaTime) {
 
 	float rad = CurrentOrbigDegree * 0.0174533;
 
-	pPosition = new XMFLOAT3(cos(rad) * OrbitDistance, sin(rad) * OrbitDistance, 0);
+	pPosition = new XMFLOAT3((cos(rad) * OrbitDistance) + pOriginPosition->x, (sin(rad) * OrbitDistance) + pOriginPosition->y, pOriginPosition->z);
 }

@@ -1,10 +1,10 @@
 #include "BaseObject.h"
 #include "World.h"
 
-BaseObject::BaseObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2)
+BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 {
 	this->Name = Name;
-	pScale = new XMFLOAT3(0.f, 0.f, 0.f);
+	pScale = new XMFLOAT3(1.f, 1.f, 1.f);
 	pPosition = new XMFLOAT3(0.f, 0.f, 0.f);
 	pVelocity = new XMFLOAT3(0.f, 0.f, 0.f);
 	pAngle = new XMFLOAT3(0.f, 0.f, 0.f);
@@ -14,6 +14,8 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, const char* Mate
 	this->pModelPath = ModelPath;
 	this->pMaterialPath = MaterialPath;
 	this->pMaterialPath2 = MaterialPath2;
+
+	renderShader = RenderShader::SHADED;
 
 	pD3DClass = 0;
 	pParent = 0;
@@ -99,7 +101,7 @@ void BaseObject::SetModelPath(const char* ModelPath) {
 
 	pModelClass = new BumpModelClass;
 
-	HRESULT result = pModelClass->Initialize(pD3DClass->GetDevice(), (char*)ModelPath, L"../Engine/data/stone.dds", L"../Engine/data/normal.dds");
+	HRESULT result = pModelClass->Initialize(pD3DClass->GetDevice(), (char*)ModelPath, GetMaterialPath(), GetNormalPath());
 
 	// Args - D3D device, model path, texture path, texture path 2
 }
@@ -108,19 +110,19 @@ const char* BaseObject::GetModelPath() {
 	return pModelPath;
 }
 
-void BaseObject::SetMaterialPath(const char* MaterialPath) {
+void BaseObject::SetMaterialPath(WCHAR* MaterialPath) {
 	this->pMaterialPath = MaterialPath;
 }
 
-const char* BaseObject::GetMaterialPath() {
+WCHAR* BaseObject::GetMaterialPath() {
 	return pMaterialPath;
 }
 
-void BaseObject::SetNormalPath(const char* NormalPath) {
+void BaseObject::SetNormalPath(WCHAR* NormalPath) {
 	this->pMaterialPath2 = NormalPath;
 }
 
-const char* BaseObject::GetNormalPath() {
+WCHAR* BaseObject::GetNormalPath() {
 	return pMaterialPath2;
 }
 
@@ -156,31 +158,33 @@ XMMATRIX TransformPosition(XMMATRIX* pMatrix, XMFLOAT3* pPosition) {
 	return Matrix;
 }
 
-XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject) {
+XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject, bool dontTransformRotation) {
 	XMMATRIX origin = *pOrigin;
 	XMFLOAT3* pAngle = pObject->pAngle;
 	XMFLOAT3* pPosition = pObject->pPosition;
 
 	if (pObject->bRotateFirst) {
-		if (!pObject->bDontTransformParentRotation) {
+		if (!dontTransformRotation) {
 			origin = TransformRotation(&origin, pAngle);
 		}
 		origin = TransformPosition(&origin, pPosition);
 	}
 	else {
-		if (!pObject->bDontTransformParentRotation) {
+		if (!dontTransformRotation) {
 			origin = TransformRotation(&origin, pAngle);
 		}
 		origin = TransformPosition(&origin, pPosition);
 	}
 
 	if (pObject->GetParent() != 0) {
-		origin = CalculateWorldPosition(&origin, pObject->GetParent());
+		origin = CalculateWorldPosition(&origin, pObject->GetParent(), pObject->bDontTransformParentRotation);
 	}
 
 	return origin;
 }
 
-XMMATRIX BaseObject::GetWorldPosition(XMMATRIX origin) {
-	return CalculateWorldPosition(&origin, this);
+XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin) {
+	origin = XMMatrixScaling(pScale->x, pScale->y, pScale->z);
+
+	return CalculateWorldPosition(&origin, this, false);
 }

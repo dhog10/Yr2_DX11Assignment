@@ -5,6 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <cstdint>
+#include <conio.h>
 
 GraphicsClass::GraphicsClass()
 {
@@ -15,6 +16,9 @@ GraphicsClass::GraphicsClass()
 	m_Model1 = 0;
 	m_Model2 = 0;
 	m_Model3 = 0;
+	pCameraVelocity = new XMFLOAT3(0.f, 0.f, 0.f);
+
+	GetCursorPos(&lastCursorPos);
 }
 
 
@@ -239,18 +243,87 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::Render(float rotation)
 {
-	// Keyboard input
-
-	if (GetAsyncKeyState('A')) {
-
-	}
-
-	m_Camera->SetPosition(pWorld->pCameraPosition->x, pWorld->pCameraPosition->y, pWorld->pCameraPosition->z);
-
 	////////////////////
 	double CurTime = timeGetTime();
 	float DeltaTime = (CurTime - LastTime) / 1000.f;
 	LastTime = timeGetTime();
+
+	POINT cursorPos;
+	GetCursorPos(&cursorPos);
+
+	int diffX = cursorPos.x - lastCursorPos.x;
+	float diffY = cursorPos.y - lastCursorPos.y;
+	lastCursorPos.x = cursorPos.x;
+	lastCursorPos.y = cursorPos.y;
+
+	if (diffX != 0) {
+		pWorld->pCameraAngle->y += diffX * DeltaTime * 4;
+	}
+	if (diffY != 0) {
+		pWorld->pCameraAngle->x += diffY * DeltaTime * 4;
+	}
+	m_Camera->SetRotation(pWorld->pCameraAngle->x, pWorld->pCameraAngle->y, pWorld->pCameraAngle->z);
+
+	float cameraVelocityDampen = 0.3f;
+
+	pCameraVelocity->x *= pCameraVelocity->x * cameraVelocityDampen;
+	pCameraVelocity->y *= pCameraVelocity->y * cameraVelocityDampen;
+	pCameraVelocity->z *= pCameraVelocity->z * cameraVelocityDampen;
+
+
+	// Keyboard input
+	if (GetKeyState('W') & 0x8000) { // GetAsyncKeyState(VK_LEFT)
+		pCameraVelocity->y += 1.f;
+	}
+	if (GetKeyState('S') & 0x8000) {
+		pCameraVelocity->y -= 1.f;
+	}
+	if (GetKeyState('A') & 0x8000) {
+		pCameraVelocity->x -= 1.f;
+	}
+	if (GetKeyState('D') & 0x8000) {
+		pCameraVelocity->x += 1.f;
+	}
+
+	if (pCameraVelocity->y < -1) { pCameraVelocity->y = -1; }
+	if (pCameraVelocity->y > 1) { pCameraVelocity->y = 1; }
+	if (pCameraVelocity->x < -1) { pCameraVelocity->x = -1; }
+	if (pCameraVelocity->x > 1) { pCameraVelocity->x = 1; }
+
+	float degToRad = 0.0174533;
+
+	// Find the up vector
+	XMVECTOR up = XMLoadFloat3(new XMFLOAT3(0.f, 1.f, 0.f));
+	// Find the camera forward heading
+	XMFLOAT3* pCameraHeading = new XMFLOAT3(
+		sin(pWorld->pCameraAngle->y * degToRad), 
+		-sin(pWorld->pCameraAngle->x * degToRad), 
+		cos(pWorld->pCameraAngle->y * degToRad)
+	);
+	// Normalize the camera forward heading
+	float cameraHeadingLen = sqrt((pCameraHeading->x * pCameraHeading->x) + (pCameraHeading->y * pCameraHeading->y) + (pCameraHeading->z * pCameraHeading->z));
+	pCameraHeading->x = pCameraHeading->x / cameraHeadingLen;
+	pCameraHeading->y = pCameraHeading->y / cameraHeadingLen;
+	pCameraHeading->z = pCameraHeading->z / cameraHeadingLen;
+
+	// Load heading to vector
+	XMVECTOR cameraForward = XMLoadFloat3(pCameraHeading);
+	// Find camera right by cross product with up vector
+	XMVECTOR cameraRight = XMVector3Cross(up, cameraForward);
+	XMFLOAT3 cameraRightFloat;
+	XMStoreFloat3(&cameraRightFloat, cameraRight);
+
+	float vel = pCameraVelocity->x;
+
+	pWorld->pCameraPosition->x += cameraRightFloat.x * vel;
+	pWorld->pCameraPosition->y += cameraRightFloat.y * vel;
+	pWorld->pCameraPosition->z += cameraRightFloat.z * vel;
+
+	
+
+	m_Camera->SetPosition(pWorld->pCameraPosition->x, pWorld->pCameraPosition->y, pWorld->pCameraPosition->z);
+
+	
 
 	XMMATRIX worldMatrix, worldMatrix2, viewMatrix, projectionMatrix, translateMatrix;
 	bool result;
@@ -263,71 +336,15 @@ bool GraphicsClass::Render(float rotation)
 	m_Camera->Render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	
-	m_D3D->GetWorldMatrix(worldMatrix);
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Setup the rotation and translation of the first model.
-	worldMatrix2 = XMMatrixRotationX(rotation * 0.43f);
-	worldMatrix = XMMatrixRotationY(rotation * 2.f);
-	translateMatrix = XMMatrixTranslation(-100.f, 0.0f, 300.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, translateMatrix);
-	worldMatrix = XMMatrixMultiply(worldMatrix2, worldMatrix);
-
-	// Render the first model using the texture shader.
-	//m_Model1->Render(m_D3D->GetDeviceContext());
-	/*result = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), m_Model1->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-												  m_Model1->GetTexture());*/
-
-	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model1->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Model1->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-
-	if(!result)
-	{
-		return false;
-	}
-
-	// Setup the rotation and translation of the second model.
-	m_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = XMMatrixRotationY(rotation);
-	translateMatrix = XMMatrixTranslation(0.0f, 0.0f, 300.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, translateMatrix);
-
-	// Render the second model using the light shader.
-	//m_Model2->Render(m_D3D->GetDeviceContext());
-	/*result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-									   m_Model2->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), 
-									   m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());*/
-	if(!result)
-	{
-		return false;
-	}
-
-	// Setup the rotation and translation of the third model.
-	m_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = XMMatrixRotationY(rotation);
-	translateMatrix = XMMatrixTranslation(3.5f, 0.0f, 0.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, translateMatrix);
-
-	// Render the third model using the bump map shader.
-	//m_Model3->Render(m_D3D->GetDeviceContext());
-	/*result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), m_Model3->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-												  m_Model3->GetColorTexture(), m_Model3->GetNormalMapTexture(), m_Light->GetDirection(), 
-												  m_Light->GetDiffuseColor());*/
-	if(!result)
-	{
-		return false;
-	}
 
 	if (pWorld) {
 		std::vector<BaseObject*> objects = *pWorld->GetObjects();
 
 		for (int i = 0; i < objects.size(); i++) {
-			BaseObject* object = objects[i];
+			BaseObject* pObject = objects[i];
 
-			BumpModelClass* pModelClass = object->pModelClass;
+			BumpModelClass* pModelClass = pObject->pModelClass;
 			if (!pModelClass) { continue; }
 
 			objects[i]->pPosition->x += objects[i]->pVelocity->x * DeltaTime;
@@ -342,6 +359,8 @@ bool GraphicsClass::Render(float rotation)
 
 			// Reset worldMatrix to origin
 			m_D3D->GetWorldMatrix(worldMatrix);
+			m_Camera->GetViewMatrix(viewMatrix);
+			m_D3D->GetProjectionMatrix(projectionMatrix);
 
 			// Translate matrix using objects xyz (pyr) angle values
 			/*if (object->pAngle->x != 0.f) {
@@ -357,13 +376,52 @@ bool GraphicsClass::Render(float rotation)
 			// Translate matrix using objects xyz position values
 			worldMatrix = XMMatrixTranslation(object->pPosition->x, object->pPosition->y, object->pPosition->z);*/
 
-			worldMatrix = object->GetWorldPosition(worldMatrix);
+			worldMatrix = pObject->GetWorldMatrix(worldMatrix);
+			
+			// Store the global xyz coordinates of the object in an XMFLOAT3
+			XMVECTOR worldPos = worldMatrix.r[3];
+			XMFLOAT3 objectPos;
+			XMStoreFloat3(&objectPos, worldPos);
+
+			// Calculate the relative position between the lighting origin and the object
+			XMFLOAT3 relativePosition;
+			XMFLOAT3 lightOrigin = *pWorld->pLightingOrigin;
+			
+
+			relativePosition.x = objectPos.x - lightOrigin.x;
+			relativePosition.y = objectPos.y - lightOrigin.y;
+			relativePosition.z = objectPos.z - lightOrigin.z;
+
+			// Calculate length of relative lighting vector
+			float rLen = sqrt((relativePosition.x * relativePosition.x) + (relativePosition.y * relativePosition.y) + (relativePosition.z * relativePosition.z));
+
+			// Normalize relative lighting direction (this is now the light origin normal vector)
+			relativePosition.x = relativePosition.x / rLen;
+			relativePosition.y = relativePosition.y / rLen;
+			relativePosition.z = relativePosition.z / rLen;
 
 			// Render the object to scene
-			pModelClass->Render(m_D3D->GetDeviceContext());
-			result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				pModelClass->GetColorTexture(), pModelClass->GetNormalMapTexture(), m_Light->GetDirection(),
-				m_Light->GetDiffuseColor());
+
+			switch (pObject->renderShader) {
+			case RenderShader::SHADED:
+				pModelClass->Render(m_D3D->GetDeviceContext());
+				result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+					pModelClass->GetColorTexture(), pModelClass->GetNormalMapTexture(), relativePosition,
+					m_Light->GetDiffuseColor());
+				break;
+			case RenderShader::UNLIT:
+				pModelClass->Render(m_D3D->GetDeviceContext());
+				result = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+					pModelClass->GetColorTexture());
+				break;
+			}
+
+			// Render inverse skysphere
+
+			//m_D3D->GetWorldMatrix(worldMatrix);
+			//worldMatrix *= XMMatrixScaling(-100.f, -100.f, -100.f);
+
+
 		}
 	}
 

@@ -38,7 +38,7 @@ public:
 	bool Initialize(int, int, HWND, World*);
 	void Shutdown();
 	bool Frame();
-
+	XMFLOAT3* pCameraVelocity;
 private:
 	bool Render(float);
 
@@ -51,6 +51,7 @@ private:
 	ModelClass* m_Model2;
 	BumpModelClass* m_Model3;
 	World* pWorld;
+	POINT lastCursorPos;
 
 	double LastTime;
 };

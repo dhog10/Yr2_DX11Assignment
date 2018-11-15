@@ -15,9 +15,12 @@ public:
 	std::vector<BaseObject*>* GetObjects();
 
 	template<class T>
-	T* CreateObject(const char* Name, const char* ModelPath, const char* MaterialPath, const char* MaterialPath2);
+	T* CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2);
 
 	XMFLOAT3* pCameraPosition;
+	XMFLOAT3* pCameraAngle;
+	XMFLOAT3* pLightingOrigin;
+	WCHAR* pSkySphereMaterial;
 
 	void DestroyObject(BaseObject*);
 };
