@@ -29,12 +29,22 @@ World::World()
 	Planet->SetParent(TestObject);
 	Planet->OrbitDistance = 15.f;
 	Planet->OrbitSpeed = 0.f;
-	Planet->pAngularVelocity->y = 0.5f;
+	Planet->bDontTransformParentRotation = true;
+	//Planet->pAngularVelocity->y = 0.5f;
 	
-	StellarBody* Planet2 = CreateObject<StellarBody>("Test planet 2", "../Engine/data/cube.txt", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
+	StellarBody* Planet2 = CreateObject<StellarBody>("Test planet 2", "../Engine/data/sphere_hd.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
 	Planet2->SetParent(Planet);
-	Planet2->OrbitDistance = 6.f;
+	Planet2->OrbitDistance = 50.f;
 	Planet2->OrbitSpeed = 85.f;
+	Planet2->pAngularVelocity->y = 10.f;
+	Planet2->bDontTransformParentRotation = true;
+
+	StellarBody* Planet3 = CreateObject<StellarBody>("Test planet 3", "../Engine/data/sphere_hd.obj", "../Engine/data/stone.dds", "../Engine/data/normal.dds");
+	Planet3->SetParent(Planet2);
+	Planet3->OrbitDistance = 40.f;
+	Planet3->OrbitSpeed = 235.f;
+	Planet3->bDontTransformParentRotation = true;
+	
 }
 
 

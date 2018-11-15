@@ -240,7 +240,7 @@ void BumpModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
 }
@@ -381,17 +381,17 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 		if (stemp[0] == "v") {
 			// Read vertex
 
-			double x = ::atof(stemp[1].c_str());
-			double y = ::atof(stemp[2].c_str());
-			double z = ::atof(stemp[3].c_str()) * -1.0f;
+			double x = atof(stemp[1].c_str());
+			double y = atof(stemp[2].c_str());
+			double z = atof(stemp[3].c_str());
 
 			XMFLOAT3 vert = XMFLOAT3(x, y, z);
 			verts.push_back(vert);
 		}
 		else if (stemp[0] == "vt") {
 			// Read uv
-			double x = ::atof(stemp[1].c_str());
-			double y = 1.0f - ::atof(stemp[2].c_str());
+			double x = atof(stemp[1].c_str());
+			double y = atof(stemp[2].c_str());
 
 			XMFLOAT2 uv = XMFLOAT2(x, y);
 			uvs.push_back(uv);
@@ -399,9 +399,9 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 		else if (stemp[0] == "vn") {
 			// Read normal
 
-			double x = ::atof(stemp[1].c_str());
-			double y = ::atof(stemp[2].c_str());
-			double z = ::atof(stemp[3].c_str()) * -1.0f;
+			double x = atof(stemp[1].c_str());
+			double y = atof(stemp[2].c_str());
+			double z = atof(stemp[3].c_str());
 
 			XMFLOAT3 normal = XMFLOAT3(x, y, z);
 			normals.push_back(normal);
@@ -442,17 +442,19 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 		}
 	}
 
-	m_vertexCount = faces.size();
+	m_vertexCount = faces.size() * 3;
 	m_indexCount = m_vertexCount;
 	m_model = new ModelType[m_vertexCount];
 
+	int placeIndex = 0;
+
 	// Load face data into model
-	for (int i = m_vertexCount - 1; i >= 0 ; i--) {
+	for (int i = faces.size() - 1; i >= 0 ; i--) {
 		TriFace face = faces[i];
 
-		LoadFaceToModel(i, verts[face.v1.v], uvs[face.v1.vt], normals[face.v1.vn]);
-		LoadFaceToModel(i, verts[face.v2.v], uvs[face.v2.vt], normals[face.v2.vn]);
-		LoadFaceToModel(i, verts[face.v3.v], uvs[face.v3.vt], normals[face.v3.vn]);
+		LoadFaceToModel(placeIndex++, verts[face.v1.v], uvs[face.v1.vt], normals[face.v1.vn]);
+		LoadFaceToModel(placeIndex++, verts[face.v2.v], uvs[face.v2.vt], normals[face.v2.vn]);
+		LoadFaceToModel(placeIndex++, verts[face.v3.v], uvs[face.v3.vt], normals[face.v3.vn]);
 	}
 
 	return true;

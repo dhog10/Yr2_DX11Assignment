@@ -18,6 +18,7 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, const char* Mate
 	pD3DClass = 0;
 	pParent = 0;
 	bRotateFirst = true;
+	bDontTransformParentRotation = false;
 	Initialized = false;
 }
 
@@ -161,11 +162,15 @@ XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject) {
 	XMFLOAT3* pPosition = pObject->pPosition;
 
 	if (pObject->bRotateFirst) {
-		origin = TransformRotation(&origin, pAngle);
+		if (!pObject->bDontTransformParentRotation) {
+			origin = TransformRotation(&origin, pAngle);
+		}
 		origin = TransformPosition(&origin, pPosition);
 	}
 	else {
-		origin = TransformRotation(&origin, pAngle);
+		if (!pObject->bDontTransformParentRotation) {
+			origin = TransformRotation(&origin, pAngle);
+		}
 		origin = TransformPosition(&origin, pPosition);
 	}
 

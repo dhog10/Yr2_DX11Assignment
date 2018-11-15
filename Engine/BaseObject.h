@@ -48,6 +48,7 @@ public:
 	void OnDestroy();
 
 	bool bRotateFirst;
+	bool bDontTransformParentRotation;
 
 	BumpModelClass* pModelClass;
 
