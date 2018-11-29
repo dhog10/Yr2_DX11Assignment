@@ -5,7 +5,13 @@
 CityGenerator::CityGenerator() {
 	pBuildings = new std::vector<CityBuilding>();
 
-	
+	AddBuilding("../Engine/data/city/buildings/building_1.obj",
+		L"../Engine/data/city/buildings/building_1.dds",
+		40.f,	// Width
+		20.f,	// Height
+		0.003f,	// Scale
+		-20.f,	//XOffset
+		10.f);	// YOffset
 }
 
 CityGenerator::~CityGenerator() {
@@ -64,8 +70,8 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 							building.Model,
 							building.Material,
 							L"../Engine/data/white.dds");
-						buildingObject->SetScale(RoadSegmentScale);
-						buildingObject->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * i) + xProgress, 0.f, yOrigin);
+						buildingObject->SetScale(building.Scale);
+						buildingObject->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * i) + xProgress + building.XOffset, 0.f, yOrigin + building.YOffset);
 					}
 				}
 			}
@@ -73,13 +79,15 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 	}
 }
 
-void CityGenerator::AddBuilding(char* model, WCHAR* material, float width, float height, float scale) {
+void CityGenerator::AddBuilding(char* model, WCHAR* material, float width, float height, float scale, float XOffset, float YOffset) {
 	CityBuilding building;
 	building.Model = model;
 	building.Material = material;
 	building.Width = width;
 	building.Height = height;
 	building.Scale = scale;
+	building.XOffset = XOffset;
+	building.YOffset = YOffset;
 
 	pBuildings->push_back(building);
 }

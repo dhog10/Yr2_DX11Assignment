@@ -11,6 +11,8 @@ public:
 	float Width;
 	float Height;
 	float Scale;
+	float XOffset;
+	float YOffset;
 };
 
 class CityGenerator {
@@ -33,5 +35,5 @@ public:
 	int NumRoads;
 
 	void GenerateWorld(World* pWorld);
-	void AddBuilding(char* model, WCHAR* material, float width, float height, float scale);
+	void AddBuilding(char* model, WCHAR* material, float width, float height, float scale, float XOffset, float YOffset);
 };
