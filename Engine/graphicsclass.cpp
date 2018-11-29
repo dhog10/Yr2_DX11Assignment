@@ -251,10 +251,14 @@ bool GraphicsClass::Render(float rotation)
 	POINT cursorPos;
 	GetCursorPos(&cursorPos);
 
+	int fixedCursorX = 100;
+	int fixedCursorY = 100;
+
 	int diffX = cursorPos.x - lastCursorPos.x;
 	float diffY = cursorPos.y - lastCursorPos.y;
-	lastCursorPos.x = cursorPos.x;
-	lastCursorPos.y = cursorPos.y;
+	SetCursorPos(fixedCursorX, fixedCursorY);
+	lastCursorPos.x = fixedCursorX;
+	lastCursorPos.y = fixedCursorY;
 
 	if (diffX != 0) {
 		pWorld->pCameraAngle->y += diffX * DeltaTime * 4;
@@ -312,12 +316,20 @@ bool GraphicsClass::Render(float rotation)
 	XMVECTOR cameraRight = XMVector3Cross(up, cameraForward);
 	XMFLOAT3 cameraRightFloat;
 	XMStoreFloat3(&cameraRightFloat, cameraRight);
+	XMFLOAT3 cameraForwardFloat;
+	XMStoreFloat3(&cameraForwardFloat, cameraForward);
 
 	float vel = pCameraVelocity->x;
 
 	pWorld->pCameraPosition->x += cameraRightFloat.x * vel;
 	pWorld->pCameraPosition->y += cameraRightFloat.y * vel;
 	pWorld->pCameraPosition->z += cameraRightFloat.z * vel;
+
+	vel = pCameraVelocity->y;
+
+	pWorld->pCameraPosition->x += cameraForwardFloat.x * vel;
+	pWorld->pCameraPosition->y += cameraForwardFloat.y * vel;
+	pWorld->pCameraPosition->z += cameraForwardFloat.z * vel;
 
 	
 
@@ -385,20 +397,25 @@ bool GraphicsClass::Render(float rotation)
 
 			// Calculate the relative position between the lighting origin and the object
 			XMFLOAT3 relativePosition;
-			XMFLOAT3 lightOrigin = *pWorld->pLightingOrigin;
-			
 
-			relativePosition.x = objectPos.x - lightOrigin.x;
-			relativePosition.y = objectPos.y - lightOrigin.y;
-			relativePosition.z = objectPos.z - lightOrigin.z;
+			if (pWorld->pLightingOrigin != 0) {
+				XMFLOAT3 lightOrigin = *pWorld->pLightingOrigin;
+				relativePosition.x = objectPos.x - lightOrigin.x;
+				relativePosition.y = objectPos.y - lightOrigin.y;
+				relativePosition.z = objectPos.z - lightOrigin.z;
 
-			// Calculate length of relative lighting vector
-			float rLen = sqrt((relativePosition.x * relativePosition.x) + (relativePosition.y * relativePosition.y) + (relativePosition.z * relativePosition.z));
 
-			// Normalize relative lighting direction (this is now the light origin normal vector)
-			relativePosition.x = relativePosition.x / rLen;
-			relativePosition.y = relativePosition.y / rLen;
-			relativePosition.z = relativePosition.z / rLen;
+				// Calculate length of relative lighting vector
+				float rLen = sqrt((relativePosition.x * relativePosition.x) + (relativePosition.y * relativePosition.y) + (relativePosition.z * relativePosition.z));
+
+				// Normalize relative lighting direction (this is now the light origin normal vector)
+				relativePosition.x = relativePosition.x / rLen;
+				relativePosition.y = relativePosition.y / rLen;
+				relativePosition.z = relativePosition.z / rLen;
+			}
+			else {
+				relativePosition = *pWorld->pLightingAngle;
+			}
 
 			// Render the object to scene
 

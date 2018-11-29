@@ -188,3 +188,13 @@ XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin) {
 
 	return CalculateWorldPosition(&origin, this, false);
 }
+
+void BaseObject::SetScale(float scale) {
+	pScale = new XMFLOAT3(scale, scale, scale);
+}
+
+void BaseObject::SetAngle(float p, float y, float r) {
+	float DegToRad = 0.0174533f;
+
+	pAngle = new XMFLOAT3(p * DegToRad, y * DegToRad, r * DegToRad);
+}

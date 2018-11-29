@@ -78,6 +78,9 @@
     <ClInclude Include="StellarBody.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="CityGenerator.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bumpmapshaderclass.cpp">
@@ -133,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="StellarBody.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="CityGenerator.cpp">
+      <Filter>Source Files\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

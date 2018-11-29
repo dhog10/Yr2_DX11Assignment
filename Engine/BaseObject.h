@@ -47,6 +47,9 @@ public:
 	XMFLOAT3 * pAngle;
 	XMFLOAT3 * pAngularVelocity;
 
+	void SetScale(float scale);
+	void SetAngle(float, float, float);
+
 	virtual void OnRender(float DeltaTime);
 	void OnCreate();
 	void OnDestroy();

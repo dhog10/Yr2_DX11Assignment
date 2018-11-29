@@ -1,11 +1,15 @@
  #include "World.h"
 
 #include "StellarBody.h"
+#include "CityGenerator.h"
+#include "BaseObject.h"
 
 World::World()
 {
 	CurrentID = 0;
 	Objects = new std::vector<BaseObject*>();
+	pLightingOrigin = 0;
+	pLightingAngle = new XMFLOAT3(0.1f, -1.f, 0.f);
 
 	pCameraPosition = new XMFLOAT3(0.f, 0.f, -10.f);
 	pCameraAngle = new XMFLOAT3(0.f, 0.f, 0.f);
@@ -22,7 +26,7 @@ World::World()
 	Sun->pAngularVelocity->y = 0.3f;
 	Sun->renderShader = RenderShader::UNLIT;
 	
-	pLightingOrigin = Sun->pOriginPosition;
+	//pLightingOrigin = Sun->pOriginPosition;
 
 	StellarBody* Earth = CreateObject<StellarBody>("Earth", "../Engine/data/sphere_hd.obj", L"../Engine/data/earth.dds", L"../Engine/data/white.dds");
 	Earth->SetParent(Sun);
@@ -42,12 +46,32 @@ World::World()
 	Moon->bDontTransformParentRotation = true;
 	Moon->pScale = new XMFLOAT3(0.05f, 0.05f, 0.05f);
 
-	/*StellarBody* Planet3 = CreateObject<StellarBody>("Test planet 3", "../Engine/data/sphere_hd.obj", L"../Engine/data/stone.dds", L"../Engine/data/normal.dds");
-	Planet3->SetParent(Earth);
-	Planet3->OrbitDistance = 15.f;
-	Planet3->OrbitSpeed = 0.4f;
-	Planet3->bDontTransformParentRotation = true;
-	Planet3->pScale = new XMFLOAT3(0.05f, 0.05f, 0.05f);*/
+	// For some reason the entire project breaks if i dont call the CreateObject function here first
+	BaseObject* roadX = CreateObject<BaseObject>("Road X",
+		"../Engine/data/city/roads/road_2_lane_x.obj",
+		L"../Engine/data/city/roads/road_2_lane_x.dds",
+		L"../Engine/data/white.dds");
+	roadX->SetScale(0.01f);
+
+	/*BaseObject* roadS = CreateObject<BaseObject>("Road S",
+		"../Engine/data/city/roads/road_2_lane_straight.obj",
+		L"../Engine/data/city/roads/road_2_lane_straight.dds",
+		L"../Engine/data/white.dds");
+	roadS->SetScale(0.01f);
+	roadS->pPosition->x = 36.f;*/
+
+	CityGenerator generator;
+	generator.RoadSegmentSize = 36.f;
+	generator.RoadSegmentScale = 0.01f;
+	generator.RoadLength = 5;
+	generator.NumRoads = 2;
+
+	generator.StraightRoadModel = "../Engine/data/city/roads/road_2_lane_straight.obj";
+	generator.StraightRoadMaterial = L"../Engine/data/city/roads/road_2_lane_straight.dds";
+	generator.CrossRoadsModel = "../Engine/data/city/roads/road_2_lane_x.obj";
+	generator.CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
+
+	generator.GenerateWorld(this);
 }
 
 

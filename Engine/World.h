@@ -20,6 +20,7 @@ public:
 	XMFLOAT3* pCameraPosition;
 	XMFLOAT3* pCameraAngle;
 	XMFLOAT3* pLightingOrigin;
+	XMFLOAT3* pLightingAngle;
 	WCHAR* pSkySphereMaterial;
 
 	void DestroyObject(BaseObject*);
