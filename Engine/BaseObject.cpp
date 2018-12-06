@@ -99,9 +99,19 @@ void BaseObject::SetModelPath(const char* ModelPath) {
 
 	if (!Initialized) { return; }
 
+	bool CacheContainsModel = pWorld->ModelCache.find(ModelPath) != pWorld->ModelCache.end();
+	if (CacheContainsModel) {
+		BumpModelClass* pCachedModelClass = pWorld->ModelCache.at(ModelPath);
+		pModelClass = pCachedModelClass;
+
+		return;
+	}
+
 	pModelClass = new BumpModelClass;
 
 	HRESULT result = pModelClass->Initialize(pD3DClass->GetDevice(), (char*)ModelPath, GetMaterialPath(), GetNormalPath());
+
+	pWorld->ModelCache[ModelPath] = pModelClass;
 
 	// Args - D3D device, model path, texture path, texture path 2
 }

@@ -2,6 +2,7 @@
 
 #include "BaseObject.h"
 #include <vector>
+#include <map>
 
 class World
 {
@@ -11,6 +12,8 @@ private:
 public:
 	World();
 	~World();
+
+	std::map<const char*, BumpModelClass*> ModelCache;
 
 	std::vector<BaseObject*>* GetObjects();
 

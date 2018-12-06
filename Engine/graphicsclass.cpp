@@ -419,7 +419,15 @@ bool GraphicsClass::Render(float rotation)
 
 			// Render the object to scene
 
+			XMFLOAT4 ambientColor = XMFLOAT4(0.22f, 0.21f, 0.2f,1.f);
+			XMFLOAT4 specularColor = XMFLOAT4(0.2f,0.2f,0.2f, 0.f);
+			float specularPower = 15;
+
 			switch (pObject->renderShader) {
+			case RenderShader::SHADED_NO_BUMP:
+				pModelClass->Render(m_D3D->GetDeviceContext());
+				result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+					pModelClass->GetColorTexture(), relativePosition, m_Light->GetDiffuseColor(), ambientColor, m_Camera->GetPosition(), specularColor, specularPower);
 			case RenderShader::SHADED:
 				pModelClass->Render(m_D3D->GetDeviceContext());
 				result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,

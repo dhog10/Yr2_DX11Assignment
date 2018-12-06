@@ -12,6 +12,30 @@ CityGenerator::CityGenerator() {
 		0.003f,	// Scale
 		-20.f,	//XOffset
 		10.f);	// YOffset
+
+	AddBuilding("../Engine/data/city/buildings/247_house.obj",
+		L"../Engine/data/white.dds",
+		15.f,
+		15.f,
+		0.04f,
+		-6.f,
+		10.f);
+
+	AddBuilding("../Engine/data/city/buildings/building.obj",
+		L"../Engine/data/white.dds",
+		25.f,
+		25.f,
+		3.f,
+		-6.f,
+		10.f);
+
+	AddBuilding("../Engine/data/city/buildings/rb001.obj",
+		L"../Engine/data/white.dds",
+		25.f,
+		25.f,
+		0.0015f,
+		-6.f,
+		20.f);
 }
 
 CityGenerator::~CityGenerator() {
@@ -49,30 +73,49 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 				roadV->bRotateFirst = true;
 				roadV->SetScale(RoadSegmentScale);
 				roadV->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin + (RoadSegmentSize * (i - 1)));
+			}
 
-				float xProgress = 0.f;
-				float yProgress = 0.f;
+			float xProgress = RoadSegmentSize;
+			float yProgress = RoadSegmentSize;
 
-				if (pBuildings->size() > 0) {
-					while (xProgress < RoadSegmentSize) {
-						CityBuilding building = pBuildings->at(0); //TODO: Pick random building
+			if (pBuildings->size() > 0) {
+				int c = 0;
 
-						float w = building.Width;
-						float h = building.Height;
+				while (xProgress < RoadSegmentSize * RoadLength) {
+					CityBuilding building;
 
-						if (i == 1) {
-							yProgress = h;
+					bool found = false;
+					for (int i = 0; i < 10; i++) {
+						int index = rand() % pBuildings->size();
+						if (index > pBuildings->size()) { index = pBuildings->size(); }
+						building = pBuildings->at(index); //TODO: Pick random building
+
+						if (xProgress + building.Width <= RoadSegmentSize * RoadLength) {
+							found = true;
+							break;
 						}
-
-						xProgress += w;
-
-						BaseObject* buildingObject = pWorld->CreateObject<BaseObject>("Building",
-							building.Model,
-							building.Material,
-							L"../Engine/data/white.dds");
-						buildingObject->SetScale(building.Scale);
-						buildingObject->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * i) + xProgress + building.XOffset, 0.f, yOrigin + building.YOffset);
 					}
+
+					if (!found) { break; }
+
+					float w = building.Width;
+					float h = building.Height;
+
+					if (c == 0) {
+						yProgress = h;
+					}
+
+					xProgress += w;
+
+					BaseObject* buildingObject = pWorld->CreateObject<BaseObject>("Building",
+						building.Model,
+						building.Material,
+						L"../Engine/data/white.dds");
+					buildingObject->SetScale(building.Scale);
+					buildingObject->renderShader = RenderShader::SHADED_NO_BUMP;
+					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin + building.YOffset);
+
+					c++;
 				}
 			}
 		}

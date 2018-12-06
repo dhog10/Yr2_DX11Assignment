@@ -1,0 +1,27 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 06.12.2018 14:25:42
+
+newmtl ground
+	Ns 32.6421
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.6400 0.6400 0.6400
+	Ks 0.2500 0.2500 0.2500
+	Ke 0.0000 0.0000 0.0000
+	map_bump Texture_263_Normal_Bump.tga
+
+newmtl hotel_glas
+	Ns 32.6421
+	Ni 1.5000
+	d 0.4400
+	Tr 0.5600
+	Tf 0.4400 0.4400 0.4400 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.6400 0.6400 0.6400
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.3440 0.3440 0.3440

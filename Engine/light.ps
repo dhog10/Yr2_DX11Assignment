@@ -39,6 +39,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	float4 textureColor;
 	float3 lightDir;
 	float lightIntensity;
+	float ambientIntensity;
 	float4 color;
 	float3 reflection;
     float4 specular;
@@ -57,7 +58,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     lightDir = -lightDirection;
 
     // Calculate the amount of light on this pixel.
-    lightIntensity = saturate(dot(input.normal, lightDir));
+    lightIntensity = max(0.1, saturate(dot(input.normal, lightDir)));
+	ambientIntensity = saturate(dot(-input.normal, lightDir));
 
 	if(lightIntensity > 0.0f)
     {
@@ -71,12 +73,12 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         reflection = normalize(2 * lightIntensity * input.normal - lightDir); 
 
 		// Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
-        specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
+        specular = min(0.4, pow(saturate(dot(reflection, input.viewDirection)), specularPower));
     }
 
     // Multiply the texture pixel and the input color to get the textured result.
-    color = color * textureColor;
-
+    color = color * textureColor * lightIntensity;
+	
 	// Add the specular component last to the output color.
     color = saturate(color + specular);
 

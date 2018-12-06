@@ -6,10 +6,12 @@
 
 World::World()
 {
+	ModelCache = std::map<const char*, BumpModelClass*>();
+
 	CurrentID = 0;
 	Objects = new std::vector<BaseObject*>();
 	pLightingOrigin = 0;
-	pLightingAngle = new XMFLOAT3(0.1f, -1.f, 0.f);
+	pLightingAngle = new XMFLOAT3(0.3f,-1.f,0.4f); // RIGHT, UP, FRONT
 
 	pCameraPosition = new XMFLOAT3(0.f, 0.f, -10.f);
 	pCameraAngle = new XMFLOAT3(0.f, 0.f, 0.f);
@@ -64,7 +66,7 @@ World::World()
 	generator.RoadSegmentSize = 36.f;
 	generator.RoadSegmentScale = 0.01f;
 	generator.RoadLength = 5;
-	generator.NumRoads = 2;
+	generator.NumRoads = 5;
 
 	generator.StraightRoadModel = "../Engine/data/city/roads/road_2_lane_straight.obj";
 	generator.StraightRoadMaterial = L"../Engine/data/city/roads/road_2_lane_straight.dds";
@@ -90,6 +92,7 @@ T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 {
 	T* pObject = new T(Name, ModelPath, MaterialPath, MaterialPath2);
 	pObject->ID = CurrentID;
+	pObject->pWorld = this;
 	CurrentID++;
 
 	// Add to object array & call create functions

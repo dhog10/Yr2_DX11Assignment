@@ -2,8 +2,9 @@
 
 #include "d3dclass.h"
 #include "bumpmodelclass.h"
+#include <map>
 
-enum RenderShader { SHADED, UNLIT };
+enum RenderShader { SHADED, UNLIT, SHADED_NO_BUMP };
 
 class BaseObject
 {
@@ -58,6 +59,8 @@ public:
 	bool bDontTransformParentRotation;
 
 	BumpModelClass* pModelClass;
+
+	class World* pWorld;
 
 	bool operator==(BaseObject other);
 };

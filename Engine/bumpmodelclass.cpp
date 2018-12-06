@@ -393,7 +393,7 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 			double x = atof(stemp[1].c_str());
 			double y = atof(stemp[2].c_str());
 
-			XMFLOAT2 uv = XMFLOAT2(x, y);
+			XMFLOAT2 uv = XMFLOAT2(x,1 - y);
 			uvs.push_back(uv);
 		}
 		else if (stemp[0] == "vn") {
