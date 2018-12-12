@@ -49,6 +49,8 @@ public:
 
 	void GetVideoCardInfo(char*, int&);
 
+	void TurnOffAlphaBlending();
+	void EnableSecondBlendState();
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;
@@ -61,6 +63,8 @@ private:
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
+
+	ID3D11BlendState* m_alphaBlendState2;
 
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;

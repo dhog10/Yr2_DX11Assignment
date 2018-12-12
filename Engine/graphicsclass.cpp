@@ -18,6 +18,9 @@ GraphicsClass::GraphicsClass()
 	m_Model3 = 0;
 	pCameraVelocity = new XMFLOAT3(0.f, 0.f, 0.f);
 
+	m_SkyPlane = 0;
+	m_SkyPlaneShader = 0;
+
 	GetCursorPos(&lastCursorPos);
 }
 
@@ -86,7 +89,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Initialize the light object.
 	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetDiffuseColor(1.0f, 0.9f, 0.8f, 1.0f);
 	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
 	m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_Light->SetSpecularPower(64.0f);
@@ -138,6 +141,38 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 		return false;
 	}
 
+
+	// Create the sky plane object.
+	m_SkyPlane = new SkyPlaneClass;
+	if (!m_SkyPlane)
+	{
+		return false;
+	}
+
+	// Initialize the sky plane object.
+	result = m_SkyPlane->Initialize(m_D3D->GetDevice(), L"../Engine/data/clouds/clouds1.dds", L"../Engine/data/clouds/clouds2.dds");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the sky plane object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the sky plane shader object.
+	m_SkyPlaneShader = new SkyPlaneShaderClass;
+	if (!m_SkyPlaneShader)
+	{
+		return false;
+	}
+
+	// Initialize the sky plane shader object.
+	result = m_SkyPlaneShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the sky plane shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+
 	// Assign private world variable
 	this->pWorld = pWorld;
 
@@ -161,6 +196,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 void GraphicsClass::Shutdown()
 {
+	// Release the sky plane shader object.
+	if (m_SkyPlaneShader)
+	{
+		m_SkyPlaneShader->Shutdown();
+		delete m_SkyPlaneShader;
+		m_SkyPlaneShader = 0;
+	}
+
+	// Release the sky plane object.
+	if (m_SkyPlane)
+	{
+		m_SkyPlane->Shutdown();
+		delete m_SkyPlane;
+		m_SkyPlane = 0;
+	}
+
 	// Release the model objects.
 	if(m_Model1)
 	{
@@ -230,6 +281,9 @@ bool GraphicsClass::Frame()
 		rotation -= 360.0f;
 	}
 	
+	// Do the sky plane frame processing.
+	m_SkyPlane->Frame();
+
 	// Render the graphics scene.
 	result = Render(rotation);
 	if(!result)
@@ -243,6 +297,8 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::Render(float rotation)
 {
+	pWorld->Think();
+
 	////////////////////
 	double CurTime = timeGetTime();
 	float DeltaTime = (CurTime - LastTime) / 1000.f;
@@ -261,10 +317,10 @@ bool GraphicsClass::Render(float rotation)
 	lastCursorPos.y = fixedCursorY;
 
 	if (diffX != 0) {
-		pWorld->pCameraAngle->y += diffX * DeltaTime * 4;
+		pWorld->pCameraAngle->y += diffX * 0.07f;
 	}
 	if (diffY != 0) {
-		pWorld->pCameraAngle->x += diffY * DeltaTime * 4;
+		pWorld->pCameraAngle->x += diffY * 0.07f;
 	}
 	m_Camera->SetRotation(pWorld->pCameraAngle->x, pWorld->pCameraAngle->y, pWorld->pCameraAngle->z);
 
@@ -321,17 +377,17 @@ bool GraphicsClass::Render(float rotation)
 
 	float vel = pCameraVelocity->x;
 
-	pWorld->pCameraPosition->x += cameraRightFloat.x * vel;
-	pWorld->pCameraPosition->y += cameraRightFloat.y * vel;
-	pWorld->pCameraPosition->z += cameraRightFloat.z * vel;
+	float camSpeed = 100.f;
+
+	pWorld->pCameraPosition->x += cameraRightFloat.x * vel * DeltaTime * camSpeed;
+	pWorld->pCameraPosition->y += cameraRightFloat.y * vel * DeltaTime * camSpeed;
+	pWorld->pCameraPosition->z += cameraRightFloat.z * vel * DeltaTime * camSpeed;
 
 	vel = pCameraVelocity->y;
 
-	pWorld->pCameraPosition->x += cameraForwardFloat.x * vel;
-	pWorld->pCameraPosition->y += cameraForwardFloat.y * vel;
-	pWorld->pCameraPosition->z += cameraForwardFloat.z * vel;
-
-	
+	pWorld->pCameraPosition->x += cameraForwardFloat.x * vel * DeltaTime * camSpeed;
+	pWorld->pCameraPosition->y += cameraForwardFloat.y * vel * DeltaTime * camSpeed;
+	pWorld->pCameraPosition->z += cameraForwardFloat.z * vel * DeltaTime * camSpeed;
 
 	m_Camera->SetPosition(pWorld->pCameraPosition->x, pWorld->pCameraPosition->y, pWorld->pCameraPosition->z);
 
@@ -347,7 +403,27 @@ bool GraphicsClass::Render(float rotation)
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+
+	// Enable additive blending so the clouds blend with the sky dome color.
+	//m_D3D->EnableSecondBlendState();
+
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Render the sky plane using the sky plane shader.
+
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0, 2000, 0));
+
+	m_SkyPlane->Render(m_D3D->GetDeviceContext());
+	m_SkyPlaneShader->Render(m_D3D->GetDeviceContext(), m_SkyPlane->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_SkyPlane->GetCloudTexture1(), m_SkyPlane->GetCloudTexture2(), m_SkyPlane->GetTranslation(0), m_SkyPlane->GetTranslation(1),
+		m_SkyPlane->GetTranslation(2), m_SkyPlane->GetTranslation(3), m_SkyPlane->GetBrightness());
+
+	m_D3D->GetWorldMatrix(worldMatrix);
+
+	// Turn off blending.
+	// m_D3D->TurnOffAlphaBlending();
 
 
 	if (pWorld) {
@@ -355,6 +431,10 @@ bool GraphicsClass::Render(float rotation)
 
 		for (int i = 0; i < objects.size(); i++) {
 			BaseObject* pObject = objects[i];
+
+			if (!pObject->IsInitialized()) {
+				pObject->Initialize(m_D3D);
+			}
 
 			BumpModelClass* pModelClass = pObject->pModelClass;
 			if (!pModelClass) { continue; }
@@ -373,20 +453,6 @@ bool GraphicsClass::Render(float rotation)
 			m_D3D->GetWorldMatrix(worldMatrix);
 			m_Camera->GetViewMatrix(viewMatrix);
 			m_D3D->GetProjectionMatrix(projectionMatrix);
-
-			// Translate matrix using objects xyz (pyr) angle values
-			/*if (object->pAngle->x != 0.f) {
-				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->x);
-			}
-			if (object->pAngle->y != 0.f) {
-				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->y);
-			}
-			if (object->pAngle->z != 0.f) {
-				worldMatrix = XMMatrixRotationX(rotation * object->pAngle->z);
-			}
-			
-			// Translate matrix using objects xyz position values
-			worldMatrix = XMMatrixTranslation(object->pPosition->x, object->pPosition->y, object->pPosition->z);*/
 
 			worldMatrix = pObject->GetWorldMatrix(worldMatrix);
 			
@@ -440,13 +506,6 @@ bool GraphicsClass::Render(float rotation)
 					pModelClass->GetColorTexture());
 				break;
 			}
-
-			// Render inverse skysphere
-
-			//m_D3D->GetWorldMatrix(worldMatrix);
-			//worldMatrix *= XMMatrixScaling(-100.f, -100.f, -100.f);
-
-
 		}
 	}
 

@@ -16,12 +16,15 @@
 #include "bumpmodelclass.h"
 #include "World.h"
 
+#include "skyplaneclass.h"
+#include "skyplaneshaderclass.h"
+
 /////////////
 // GLOBALS //
 /////////////
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
-const float SCREEN_DEPTH = 1000.0f;
+const float SCREEN_DEPTH = 20000.0f;
 const float SCREEN_NEAR = 0.1f;
 
 
@@ -52,6 +55,9 @@ private:
 	BumpModelClass* m_Model3;
 	World* pWorld;
 	POINT lastCursorPos;
+
+	SkyPlaneClass *m_SkyPlane;
+	SkyPlaneShaderClass* m_SkyPlaneShader;
 
 	double LastTime;
 };

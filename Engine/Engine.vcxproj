@@ -24,6 +24,8 @@
     <ClInclude Include="lightshaderclass.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="shadermanagerclass.h" />
+    <ClInclude Include="skyplaneclass.h" />
+    <ClInclude Include="skyplaneshaderclass.h" />
     <ClInclude Include="StellarBody.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textureclass.h" />
@@ -45,6 +47,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="shadermanagerclass.cpp" />
+    <ClCompile Include="skyplaneclass.cpp" />
+    <ClCompile Include="skyplaneshaderclass.cpp" />
     <ClCompile Include="StellarBody.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
@@ -56,6 +60,8 @@
     <None Include="bumpmap.vs" />
     <None Include="light.ps" />
     <None Include="light.vs" />
+    <None Include="skyplane.ps" />
+    <None Include="skyplane.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
   </ItemGroup>
@@ -63,7 +69,7 @@
     <ProjectGuid>{B582C848-8474-42F1-91EE-C5B948FE3486}</ProjectGuid>
     <RootNamespace>Engine</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

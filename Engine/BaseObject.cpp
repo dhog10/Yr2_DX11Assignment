@@ -42,6 +42,11 @@ void BaseObject::Initialize(D3DClass* pD3DClass) {
 	}
 }
 
+bool BaseObject::IsInitialized()
+{
+	return Initialized;
+}
+
 BaseObject::~BaseObject()
 {
 	if (pModelClass) {
@@ -207,4 +212,10 @@ void BaseObject::SetAngle(float p, float y, float r) {
 	float DegToRad = 0.0174533f;
 
 	pAngle = new XMFLOAT3(p * DegToRad, y * DegToRad, r * DegToRad);
+}
+
+XMFLOAT3 BaseObject::GetAngle() {
+	float DegToRad = 0.0174533f;
+
+	return XMFLOAT3(pAngle->x / DegToRad, pAngle->y / DegToRad, pAngle->z / DegToRad);
 }

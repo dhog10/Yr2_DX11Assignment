@@ -1,7 +1,6 @@
  #include "World.h"
 
 #include "StellarBody.h"
-#include "CityGenerator.h"
 #include "BaseObject.h"
 
 World::World()
@@ -11,16 +10,16 @@ World::World()
 	CurrentID = 0;
 	Objects = new std::vector<BaseObject*>();
 	pLightingOrigin = 0;
-	pLightingAngle = new XMFLOAT3(0.3f,-1.f,0.4f); // RIGHT, UP, FRONT
+	pLightingAngle = new XMFLOAT3(0.6f,-1.f,0.7f); // RIGHT, UP, FRONT
 
 	pCameraPosition = new XMFLOAT3(0.f, 0.f, -10.f);
 	pCameraAngle = new XMFLOAT3(0.f, 0.f, 0.f);
 	pSkySphereMaterial = L"../Engine/data/skysphere1.dds";
 
-	StellarBody* SkySphere = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/skysphere1.dds", L"../Engine/data/sun.dds");
+	StellarBody* SkySphere = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/sky/clouds1.dds", L"../Engine/data/sun.dds");
 	SkySphere->renderShader = RenderShader::UNLIT;
-	SkySphere->pScale = new XMFLOAT3(-50.f, -50.f, -50.f);
-	SkySphere->pAngle = new XMFLOAT3(0.f, 50.f, 0.f);
+	SkySphere->pScale = new XMFLOAT3(-500.f, -500.f, -500.f);
+	SkySphere->pAngle = new XMFLOAT3(180.f * 0.0174533f, 0.f, 0.f);
 
 	StellarBody* Sun = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/sun.dds", L"../Engine/data/sun.dds");
 	Sun->pOriginPosition = new XMFLOAT3(0.f, 0, 100.f);
@@ -55,25 +54,20 @@ World::World()
 		L"../Engine/data/white.dds");
 	roadX->SetScale(0.01f);
 
-	/*BaseObject* roadS = CreateObject<BaseObject>("Road S",
-		"../Engine/data/city/roads/road_2_lane_straight.obj",
-		L"../Engine/data/city/roads/road_2_lane_straight.dds",
-		L"../Engine/data/white.dds");
-	roadS->SetScale(0.01f);
-	roadS->pPosition->x = 36.f;*/
+	CityGenerator* pGenerator = new CityGenerator();
+	pGenerator->RoadSegmentSize = 36.f;
+	pGenerator->RoadSegmentScale = 0.01f;
+	pGenerator->RoadLength = 5;
+	pGenerator->NumRoads = 5;
 
-	CityGenerator generator;
-	generator.RoadSegmentSize = 36.f;
-	generator.RoadSegmentScale = 0.01f;
-	generator.RoadLength = 5;
-	generator.NumRoads = 5;
+	pGenerator->StraightRoadModel = "../Engine/data/city/roads/road_2_lane_straight.obj";
+	pGenerator->StraightRoadMaterial = L"../Engine/data/city/roads/road_2_lane_straight.dds";
+	pGenerator->CrossRoadsModel = "../Engine/data/city/roads/road_2_lane_x.obj";
+	pGenerator->CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
 
-	generator.StraightRoadModel = "../Engine/data/city/roads/road_2_lane_straight.obj";
-	generator.StraightRoadMaterial = L"../Engine/data/city/roads/road_2_lane_straight.dds";
-	generator.CrossRoadsModel = "../Engine/data/city/roads/road_2_lane_x.obj";
-	generator.CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
+	pGenerator->GenerateWorld(this);
 
-	generator.GenerateWorld(this);
+	this->pCityGenerator = pGenerator;
 }
 
 
@@ -114,4 +108,10 @@ void World::DestroyObject(BaseObject* pObject)
 	pObject->OnDestroy();
 
 	delete pObject;
+}
+
+void World::Think() {
+	if (pCityGenerator != 0) {
+		pCityGenerator->Think(this);
+	}
 }

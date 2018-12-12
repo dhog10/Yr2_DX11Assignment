@@ -81,6 +81,12 @@
     <ClInclude Include="CityGenerator.h">
       <Filter>Header Files\World</Filter>
     </ClInclude>
+    <ClInclude Include="skyplaneclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skyplaneshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bumpmapshaderclass.cpp">
@@ -140,6 +146,12 @@
     <ClCompile Include="CityGenerator.cpp">
       <Filter>Source Files\World</Filter>
     </ClCompile>
+    <ClCompile Include="skyplaneclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skyplaneshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bumpmap.ps">
@@ -158,6 +170,12 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="texture.vs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="skyplane.vs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="skyplane.ps">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

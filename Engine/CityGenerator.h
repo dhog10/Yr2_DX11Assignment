@@ -15,12 +15,27 @@ public:
 	float YOffset;
 };
 
+class CityCar {
+public:
+	char* Model;
+	WCHAR* Material;
+	float Scale;
+	float Yaw;
+};
+
 class CityGenerator {
 private:
-	
+	std::vector<CityCar>* pCarTypes;
+	std::vector<class BaseObject*> Cars;
+	int MaxCars;
+	float LastCarSpawn;
+
+	void AddCar(char* model, WCHAR* material, float scale, float yaw);
 public:
 	CityGenerator();
 	~CityGenerator();
+
+	void Think(World*);
 
 	std::vector<CityBuilding>* pBuildings;
 

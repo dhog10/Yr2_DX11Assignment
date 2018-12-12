@@ -26,6 +26,7 @@ public:
 	int ID;
 
 	void Initialize(D3DClass* pD3DClass);
+	bool IsInitialized();
 
 	void SetModelPath(const char*);
 	const char* GetModelPath();
@@ -50,6 +51,7 @@ public:
 
 	void SetScale(float scale);
 	void SetAngle(float, float, float);
+	XMFLOAT3 GetAngle();
 
 	virtual void OnRender(float DeltaTime);
 	void OnCreate();

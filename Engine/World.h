@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include "CityGenerator.h"
+
 class World
 {
 private:
@@ -13,7 +15,10 @@ public:
 	World();
 	~World();
 
+	void Think();
+
 	std::map<const char*, BumpModelClass*> ModelCache;
+
 
 	std::vector<BaseObject*>* GetObjects();
 
@@ -25,6 +30,8 @@ public:
 	XMFLOAT3* pLightingOrigin;
 	XMFLOAT3* pLightingAngle;
 	WCHAR* pSkySphereMaterial;
+
+	CityGenerator* pCityGenerator;
 
 	void DestroyObject(BaseObject*);
 };
