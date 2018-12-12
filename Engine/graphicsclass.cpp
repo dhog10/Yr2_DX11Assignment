@@ -299,7 +299,9 @@ bool GraphicsClass::Render(float rotation)
 {
 	pWorld->Think();
 
-	////////////////////
+	// Here i calculate the mouse movement since the last frame to rotate the camera
+	// This allows for a mouse controlled FPS style camera
+
 	double CurTime = timeGetTime();
 	float DeltaTime = (CurTime - LastTime) / 1000.f;
 	LastTime = timeGetTime();
@@ -330,6 +332,7 @@ bool GraphicsClass::Render(float rotation)
 	pCameraVelocity->y *= pCameraVelocity->y * cameraVelocityDampen;
 	pCameraVelocity->z *= pCameraVelocity->z * cameraVelocityDampen;
 
+	// Here i receive keyboard input and transform the camera's position based on the WASD input
 
 	// Keyboard input
 	if (GetKeyState('W') & 0x8000) { // GetAsyncKeyState(VK_LEFT)
@@ -379,6 +382,7 @@ bool GraphicsClass::Render(float rotation)
 
 	float camSpeed = 100.f;
 
+	// Modify the camera's position
 	pWorld->pCameraPosition->x += cameraRightFloat.x * vel * DeltaTime * camSpeed;
 	pWorld->pCameraPosition->y += cameraRightFloat.y * vel * DeltaTime * camSpeed;
 	pWorld->pCameraPosition->z += cameraRightFloat.z * vel * DeltaTime * camSpeed;
@@ -425,10 +429,11 @@ bool GraphicsClass::Render(float rotation)
 	// Turn off blending.
 	// m_D3D->TurnOffAlphaBlending();
 
-
+	// World operations such as rendering and object think invoking
 	if (pWorld) {
 		std::vector<BaseObject*> objects = *pWorld->GetObjects();
 
+		// Loop through each object
 		for (int i = 0; i < objects.size(); i++) {
 			BaseObject* pObject = objects[i];
 
@@ -462,6 +467,7 @@ bool GraphicsClass::Render(float rotation)
 			XMStoreFloat3(&objectPos, worldPos);
 
 			// Calculate the relative position between the lighting origin and the object
+			// This is sometimes used for dynamic lighting origin for planets (not used in the city scene)
 			XMFLOAT3 relativePosition;
 
 			if (pWorld->pLightingOrigin != 0) {
@@ -480,6 +486,7 @@ bool GraphicsClass::Render(float rotation)
 				relativePosition.z = relativePosition.z / rLen;
 			}
 			else {
+				// If the lighting origin does not exist, default to a fixed vector
 				relativePosition = *pWorld->pLightingAngle;
 			}
 
@@ -489,6 +496,7 @@ bool GraphicsClass::Render(float rotation)
 			XMFLOAT4 specularColor = XMFLOAT4(0.2f,0.2f,0.2f, 0.f);
 			float specularPower = 15;
 
+			// This switch statement allows each object to control which shader is used when rendering it
 			switch (pObject->renderShader) {
 			case RenderShader::SHADED_NO_BUMP:
 				pModelClass->Render(m_D3D->GetDeviceContext());

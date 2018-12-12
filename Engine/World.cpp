@@ -3,6 +3,9 @@
 #include "StellarBody.h"
 #include "BaseObject.h"
 
+// The world class is responsible for creating and storing game objects
+// This class is also used to perform think logic for the city generator
+
 World::World()
 {
 	ModelCache = std::map<const char*, BumpModelClass*>();
@@ -21,13 +24,11 @@ World::World()
 	SkySphere->pScale = new XMFLOAT3(-500.f, -500.f, -500.f);
 	SkySphere->pAngle = new XMFLOAT3(180.f * 0.0174533f, 0.f, 0.f);
 
-	StellarBody* Sun = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/sun.dds", L"../Engine/data/sun.dds");
+	/*StellarBody* Sun = CreateObject<StellarBody>("Test planet 1", "../Engine/data/sphere_hd.obj", L"../Engine/data/sun.dds", L"../Engine/data/sun.dds");
 	Sun->pOriginPosition = new XMFLOAT3(0.f, 0, 100.f);
 	Sun->bDontTransformParentRotation = true;
 	Sun->pAngularVelocity->y = 0.3f;
 	Sun->renderShader = RenderShader::UNLIT;
-	
-	//pLightingOrigin = Sun->pOriginPosition;
 
 	StellarBody* Earth = CreateObject<StellarBody>("Earth", "../Engine/data/sphere_hd.obj", L"../Engine/data/earth.dds", L"../Engine/data/white.dds");
 	Earth->SetParent(Sun);
@@ -45,9 +46,8 @@ World::World()
 	Moon->CurrentOrbigDegree = 100.f;
 	Moon->pAngularVelocity->y = 0.8f;
 	Moon->bDontTransformParentRotation = true;
-	Moon->pScale = new XMFLOAT3(0.05f, 0.05f, 0.05f);
+	Moon->pScale = new XMFLOAT3(0.05f, 0.05f, 0.05f);*/
 
-	// For some reason the entire project breaks if i dont call the CreateObject function here first
 	BaseObject* roadX = CreateObject<BaseObject>("Road X",
 		"../Engine/data/city/roads/road_2_lane_x.obj",
 		L"../Engine/data/city/roads/road_2_lane_x.dds",
@@ -81,6 +81,8 @@ std::vector<BaseObject*>* World::GetObjects()
 	return Objects;
 }
 
+// Create an object, and perform initialization to it
+
 template<class T>
 T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 {
@@ -96,6 +98,8 @@ T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 
 	return pObject;
 }
+
+// Remove an object from the world
 
 void World::DestroyObject(BaseObject* pObject)
 {

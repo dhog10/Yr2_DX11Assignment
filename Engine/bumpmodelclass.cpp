@@ -303,6 +303,8 @@ void BumpModelClass::ReleaseTextures()
 	return;
 }
 
+// This is a utility method used in the OBJ parser method
+
 void SplitString(std::string* in, std::vector<std::string>* out, char token, int startFind) {
 	int curFind = 0;
 	int lastIndexLen = 0;
@@ -335,6 +337,9 @@ void SplitString(std::string* in, std::vector<std::string>* out, char token, int
 	}
 }
 
+// This is a utility method used in the OBJ parser method
+// This method loads the information to the model array using provided information
+
 void BumpModelClass::LoadFaceToModel(int i, XMFLOAT3 vert, XMFLOAT2 uv, XMFLOAT3 normal) {
 	m_model[i].x = vert.x;
 	m_model[i].y = vert.y;
@@ -349,6 +354,9 @@ void BumpModelClass::LoadFaceToModel(int i, XMFLOAT3 vert, XMFLOAT2 uv, XMFLOAT3
 }
 
 // Function to parse obj files
+// Can parse an OBj file without the need of conversion to the text format that we originally used
+// Can only parse OBJ files saved in triangle list order
+
 bool BumpModelClass::LoadModelOBJ(char* filename)
 {
 	ifstream fin;

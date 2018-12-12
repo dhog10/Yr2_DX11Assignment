@@ -1,6 +1,9 @@
 #include "BaseObject.h"
 #include "World.h"
 
+// The base object class is a generic class which contains information which all objects can use for common purposes
+// This reduces the amount of repeated code and allows for faster addition of many objects
+
 BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 {
 	this->Name = Name;
@@ -71,17 +74,11 @@ int BaseObject::GetID() {
 	return ID;
 }
 
+// this function could be overriden and used to perform custom render operations on this object
+
 void BaseObject::OnRender(float DeltaTime)
 {
-	// Moved position & angle manipulation to graphicsclass
-
-	/*pPosition->x += pVelocity->x * DeltaTime;
-	pPosition->y += pVelocity->y * DeltaTime;
-	pPosition->z += pVelocity->z * DeltaTime;
-
-	pAngle->x += pAngularVelocity->x * DeltaTime;
-	pAngle->y += pAngularVelocity->y * DeltaTime;
-	pAngle->z += pAngularVelocity->z * DeltaTime;*/
+	
 }
 
 void BaseObject::OnCreate()
@@ -173,6 +170,12 @@ XMMATRIX TransformPosition(XMMATRIX* pMatrix, XMFLOAT3* pPosition) {
 	return Matrix;
 }
 
+// This recursive function is used to evaluate the world position of an object
+// This function is recursive in order to take into account parent object matrices to modify the location of the child object
+// This allows for one parent object to have one or more children which move along with it
+// Children of a parent can also have their own children
+// This is more useful for planet orbits than the city scene
+
 XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject, bool dontTransformRotation) {
 	XMMATRIX origin = *pOrigin;
 	XMFLOAT3* pAngle = pObject->pAngle;
@@ -198,6 +201,7 @@ XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject, bool don
 	return origin;
 }
 
+// This returns the world matrix of the object, taking into account its parent (if it has one)
 XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin) {
 	origin = XMMatrixScaling(pScale->x, pScale->y, pScale->z);
 
