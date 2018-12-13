@@ -1,3 +1,11 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: CityGenerator.h
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #pragma once
 #include "d3dclass.h"
 #include <vector>
@@ -43,6 +51,8 @@ public:
 	WCHAR* StraightRoadMaterial;
 	char* CrossRoadsModel;
 	WCHAR* CrossRoadsMaterial;
+	char* LampModel;
+	WCHAR* LampMaterial;
 
 	float RoadSegmentSize;
 	float RoadSegmentScale;

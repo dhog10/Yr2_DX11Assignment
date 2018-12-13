@@ -3,6 +3,14 @@
 #include "StellarBody.h"
 #include "BaseObject.h"
 
+/**
+	NIEE2211 - Computer Games Studio 2
+
+	Filename: World.cpp
+	Author: Daniel Lush
+	Date: 13/12/2018
+*/
+
 // The world class is responsible for creating and storing game objects
 // This class is also used to perform think logic for the city generator
 

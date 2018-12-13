@@ -1,3 +1,11 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: StellarBody.cpp
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #include "StellarBody.h"
 #include <math.h>
 

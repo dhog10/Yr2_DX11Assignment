@@ -1,3 +1,11 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: CityGenerator.cpp
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #include "BaseObject.h"
 #include "World.h"
 #include "CityGenerator.h"
@@ -8,6 +16,8 @@ CityGenerator::CityGenerator() {
 	Cars = std::vector<BaseObject*>();
 	MaxCars = 100;
 	LastCarSpawn = 0.f;
+	LampModel = "../Engine/data/city/lamp.obj";
+	LampMaterial = L"../Engine/data/white.dds";
 
 	// Initialize building types
 
@@ -90,7 +100,8 @@ CityGenerator::~CityGenerator() {
 }
 
 void CityGenerator::GenerateWorld(World* pWorld) {
-	RenderShader roadShader = RenderShader::SHADED_NO_BUMP;
+	RenderShader roadShader = RenderShader::SHADED_FOG;
+	RenderShader buildingShader = RenderShader::SHADED_FOG;
 
 	for (int x = 0; x < NumRoads; x++) {
 		for (int y = 0; y < NumRoads; y++) {
@@ -98,33 +109,75 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 			float yOrigin = RoadSegmentSize * RoadLength * y;
 
 			// Create corner junction roads
-			BaseObject* roadX = pWorld->CreateObject<BaseObject>("Cross Road",
+			BaseObject* roadJunction = pWorld->CreateObject<BaseObject>("Cross Road",
 				CrossRoadsModel,
 				CrossRoadsMaterial,
 				L"../Engine/data/white.dds");
-			roadX->SetScale(RoadSegmentScale);
-			roadX->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin);
-			roadX->renderShader = roadShader;
+			roadJunction->SetScale(RoadSegmentScale);
+			roadJunction->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin);
+			roadJunction->renderShader = roadShader;
 
 			// Create straight roads & buildings
 			for (int i = 1; i < RoadLength; i++) {
-				BaseObject* roadH = pWorld->CreateObject<BaseObject>("Vertical Road",
+				BaseObject* roadHorizontal = pWorld->CreateObject<BaseObject>("Vertical Road",
 					StraightRoadModel,
 					StraightRoadMaterial,
 					L"../Engine/data/white.dds");
-				roadH->SetScale(RoadSegmentScale);
-				roadH->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * i), 0.f, yOrigin);
-				roadH->renderShader = roadShader;
+				roadHorizontal->SetScale(RoadSegmentScale);
+				roadHorizontal->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * i), 0.f, yOrigin);
+				roadHorizontal->renderShader = roadShader;
 
-				BaseObject* roadV = pWorld->CreateObject<BaseObject>("Vertical Vertical",
+				BaseObject* roadVertical = pWorld->CreateObject<BaseObject>("Vertical Vertical",
 					StraightRoadModel,
 					StraightRoadMaterial,
 					L"../Engine/data/white.dds");
-				roadV->SetAngle(0.f, -90.f, 0.f);
-				roadV->bRotateFirst = true;
-				roadV->SetScale(RoadSegmentScale);
-				roadV->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin + (RoadSegmentSize * (i - 1)));
-				roadV->renderShader = roadShader;
+				roadVertical->SetAngle(0.f, -90.f, 0.f);
+				roadVertical->bRotateFirst = true;
+				roadVertical->SetScale(RoadSegmentScale);
+				roadVertical->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin + (RoadSegmentSize * (i - 1)));
+				roadVertical->renderShader = roadShader;
+
+				// Vertical lamp posts
+				BaseObject* lamp = pWorld->CreateObject<BaseObject>("Vertical Vertical",
+					LampModel,
+					LampMaterial,
+					L"../Engine/data/white.dds");
+				lamp->SetAngle(0.f, -90.f, 0.f);
+				lamp->bRotateFirst = true;
+				lamp->SetScale(.1f);
+				lamp->pPosition = new XMFLOAT3(xOrigin + 1.f, 0.7f, yOrigin + (RoadSegmentSize * (i - 1)));
+				lamp->renderShader = roadShader;
+
+				BaseObject* lamp2 = pWorld->CreateObject<BaseObject>("Vertical Vertical",
+					LampModel,
+					LampMaterial,
+					L"../Engine/data/white.dds");
+				lamp2->SetAngle(0.f, 90.f, 0.f);
+				lamp2->bRotateFirst = true;
+				lamp2->SetScale(.1f);
+				lamp2->pPosition = new XMFLOAT3(xOrigin + RoadSegmentSize - 1.f, 0.7f, yOrigin + (RoadSegmentSize * (i - 1)));
+				lamp2->renderShader = roadShader;
+
+				// Horizontal lamp posts
+
+				BaseObject* lamp3 = pWorld->CreateObject<BaseObject>("Vertical Vertical",
+					LampModel,
+					LampMaterial,
+					L"../Engine/data/white.dds");
+				lamp3->SetAngle(0.f, 180.f, 0.f);
+				lamp3->bRotateFirst = true;
+				lamp3->SetScale(.1f);
+				lamp3->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * (i - 1)), 0.7f, yOrigin - RoadSegmentSize + 1.f);
+				lamp3->renderShader = roadShader;
+
+				BaseObject* lamp4 = pWorld->CreateObject<BaseObject>("Vertical Vertical",
+					LampModel,
+					LampMaterial,
+					L"../Engine/data/white.dds");
+				lamp4->bRotateFirst = true;
+				lamp4->SetScale(.1f);
+				lamp4->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * (i - 1)), 0.7f, yOrigin - 1.f);
+				lamp4->renderShader = roadShader;
 			}
 
 			// Generate randomly distrubuted buildings across the bottom row
@@ -170,7 +223,7 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 						building.Material,
 						L"../Engine/data/white.dds");
 					buildingObject->SetScale(building.Scale);
-					buildingObject->renderShader = RenderShader::SHADED_NO_BUMP;
+					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin + building.YOffset);
 
 					c++;
@@ -216,7 +269,7 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 						building.Material,
 						L"../Engine/data/white.dds");
 					buildingObject->SetScale(building.Scale);
-					buildingObject->renderShader = RenderShader::SHADED_NO_BUMP;
+					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin - building.YOffset + (RoadSegmentSize * (RoadLength - 1)));
 					buildingObject->SetAngle(0.f, 180.f, 0.f);
 
@@ -257,7 +310,7 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 						building.Material,
 						L"../Engine/data/white.dds");
 					buildingObject->SetScale(building.Scale);
-					buildingObject->renderShader = RenderShader::SHADED_NO_BUMP;
+					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + building.YOffset + RoadSegmentSize, 0.f, yOrigin + xProgress + building.XOffset);
 					buildingObject->SetAngle(0.f, 90.f, 0.f);
 
@@ -298,7 +351,7 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 						building.Material,
 						L"../Engine/data/white.dds");
 					buildingObject->SetScale(building.Scale);
-					buildingObject->renderShader = RenderShader::SHADED_NO_BUMP;
+					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin - building.YOffset + (RoadSegmentSize * RoadLength), 0.f, yOrigin + xProgress + building.XOffset);
 					buildingObject->SetAngle(0.f, -90.f, 0.f);
 

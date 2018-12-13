@@ -1,3 +1,11 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: StellarBody.h
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #pragma once
 
 #include "BaseObject.h"

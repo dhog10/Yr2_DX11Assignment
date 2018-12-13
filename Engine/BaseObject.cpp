@@ -1,3 +1,11 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: BaseObject.cpp
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #include "BaseObject.h"
 #include "World.h"
 
@@ -26,6 +34,8 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	bDontTransformParentRotation = false;
 	Initialized = false;
 }
+
+// Initialize the object, set stored materials and initialize the model
 
 void BaseObject::Initialize(D3DClass* pD3DClass) {
 	this->pD3DClass = pD3DClass;
@@ -57,12 +67,6 @@ BaseObject::~BaseObject()
 		delete pModelClass;
 		pModelClass = 0;
 	}
-	/*delete pScale;
-	delete pPosition;
-	delete pVelocity;
-	delete pAngle;
-	delete pAngularVelocity;
-	delete pModelClass;*/
 }
 
 const char* BaseObject::GetName()
@@ -95,6 +99,8 @@ bool BaseObject::operator==(BaseObject other)
 {
 	return ID == other.ID;
 }
+
+// Set the model path and initialize or retrieve the cached model object
 
 void BaseObject::SetModelPath(const char* ModelPath) {
 	this->pModelPath = ModelPath;

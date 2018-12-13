@@ -87,6 +87,9 @@
     <ClInclude Include="skyplaneshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fogshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bumpmapshaderclass.cpp">
@@ -152,6 +155,9 @@
     <ClCompile Include="skyplaneshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fogshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bumpmap.ps">
@@ -176,6 +182,12 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="skyplane.ps">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="fog.ps">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="fog.vs">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>
