@@ -78,7 +78,12 @@ public:
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
+	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
+	ModelType* m_model;
+
 	int GetIndexCount();
+	int GetVertexCount();
+
 	ID3D11ShaderResourceView* GetColorTexture();
 	ID3D11ShaderResourceView* GetNormalMapTexture();
 
@@ -99,9 +104,7 @@ private:
 	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
 
 private:
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
-	ModelType* m_model;
 	TextureClass* m_ColorTexture;
 	TextureClass* m_NormalMapTexture;
 };

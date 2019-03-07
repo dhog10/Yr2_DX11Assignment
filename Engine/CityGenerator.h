@@ -39,6 +39,13 @@ private:
 	float LastCarSpawn;
 
 	void AddCar(char* model, WCHAR* material, float scale, float yaw);
+
+	// Collisions
+
+	bool BuildingCollisionsEnabled;
+	bool LampCollisionsEnabled;
+	bool VehicleCollisionsEnabled;
+	bool RoadCollisionsEnabled;
 public:
 	CityGenerator();
 	~CityGenerator();
@@ -61,4 +68,10 @@ public:
 
 	void GenerateWorld(World* pWorld);
 	void AddBuilding(char* model, WCHAR* material, float width, float height, float scale, float XOffset, float YOffset);
+
+	// Collisions
+	bool GetBuildingCollisionsEnabled();
+	bool GetLampCollisionsEnabled();
+	bool GetVehicleCollisionsEnabled();
+	bool GetRoadCollisionsEnabled();
 };

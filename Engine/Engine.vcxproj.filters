@@ -25,6 +25,12 @@
     <Filter Include="Source Files\World">
       <UniqueIdentifier>{4a3f3abc-9fed-4d2f-8603-db233de1c8f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{a6af0556-8c59-4691-93f3-cb8b3c7ce496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{4ae346a9-bbce-4b24-879f-6ade3722193a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -89,6 +95,12 @@
     </ClInclude>
     <ClInclude Include="fogshaderclass.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionUtils.h">
+      <Filter>Header Files\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +169,12 @@
     </ClCompile>
     <ClCompile Include="fogshaderclass.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionUtils.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,7 @@ Date: 13/12/2018
 BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 {
 	this->Name = Name;
+
 	pScale = new XMFLOAT3(1.f, 1.f, 1.f);
 	pPosition = new XMFLOAT3(0.f, 0.f, 0.f);
 	pVelocity = new XMFLOAT3(0.f, 0.f, 0.f);
@@ -33,6 +34,8 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	bRotateFirst = true;
 	bDontTransformParentRotation = false;
 	Initialized = false;
+
+	CollisionEnabled = false;
 }
 
 // Initialize the object, set stored materials and initialize the model
@@ -228,4 +231,48 @@ XMFLOAT3 BaseObject::GetAngle() {
 	float DegToRad = 0.0174533f;
 
 	return XMFLOAT3(pAngle->x / DegToRad, pAngle->y / DegToRad, pAngle->z / DegToRad);
+}
+
+// Collision
+
+void BaseObject::EnableCollisions(bool enabled) {
+	CollisionEnabled = enabled;
+
+	if (enabled) {
+		ComputeBoundingBox();
+	}
+	else {
+		if (pBoundingBox != 0) {
+			delete pBoundingBox;
+		}
+	}
+}
+
+bool BaseObject::GetCollisionsEnabled() {
+	return CollisionEnabled;
+}
+
+void BaseObject::ComputeBoundingBox() {
+	if (pBoundingBox != 0) {
+		delete pBoundingBox;
+	}
+
+	pBoundingBox = new BoundingBox();
+
+	int vertexCount = pModelClass->GetVertexCount();
+
+	XMFLOAT3* pMins = new XMFLOAT3(0,0,0);
+	XMFLOAT3* pMaxs = new XMFLOAT3(0,0,0);
+
+	for (int i = 0; i < vertexCount; i++) {
+		pMins->x = min(pModelClass->m_model->x, pMins->x);
+		pMins->y = min(pModelClass->m_model->y, pMins->y);
+		pMins->z = min(pModelClass->m_model->z, pMins->z);
+
+		pMaxs->x = max(pModelClass->m_model->x, pMins->x);
+		pMaxs->y = max(pModelClass->m_model->y, pMins->y);
+		pMaxs->z = max(pModelClass->m_model->z, pMins->z);
+	}
+	
+	pBoundingBox = new BoundingBox(pMins, pMaxs);
 }

@@ -103,6 +103,10 @@ int BumpModelClass::GetIndexCount()
 	return m_indexCount;
 }
 
+int BumpModelClass::GetVertexCount() {
+	return m_vertexCount;
+}
+
 
 ID3D11ShaderResourceView* BumpModelClass::GetColorTexture()
 {

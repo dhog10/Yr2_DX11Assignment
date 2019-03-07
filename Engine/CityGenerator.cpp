@@ -93,6 +93,11 @@ CityGenerator::CityGenerator() {
 		L"../Engine/data/white.dds",
 		3.0f,
 		90.f);
+
+	BuildingCollisionsEnabled = true;
+	LampCollisionsEnabled = false;
+	VehicleCollisionsEnabled = false;
+	RoadCollisionsEnabled = false;
 }
 
 CityGenerator::~CityGenerator() {
@@ -100,8 +105,8 @@ CityGenerator::~CityGenerator() {
 }
 
 void CityGenerator::GenerateWorld(World* pWorld) {
-	RenderShader roadShader = RenderShader::SHADED_FOG;
-	RenderShader buildingShader = RenderShader::SHADED_FOG;
+	RenderShader roadShader = RenderShader::SHADED;
+	RenderShader buildingShader = RenderShader::SHADED;
 
 	for (int x = 0; x < NumRoads; x++) {
 		for (int y = 0; y < NumRoads; y++) {
@@ -116,6 +121,10 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 			roadJunction->SetScale(RoadSegmentScale);
 			roadJunction->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin);
 			roadJunction->renderShader = roadShader;
+
+			if (GetRoadCollisionsEnabled()) {
+				roadJunction->EnableCollisions(true);
+			}
 
 			// Create straight roads & buildings
 			for (int i = 1; i < RoadLength; i++) {
@@ -136,6 +145,11 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 				roadVertical->SetScale(RoadSegmentScale);
 				roadVertical->pPosition = new XMFLOAT3(xOrigin, 0.f, yOrigin + (RoadSegmentSize * (i - 1)));
 				roadVertical->renderShader = roadShader;
+
+				if (GetRoadCollisionsEnabled()) {
+					roadHorizontal->EnableCollisions(true);
+					roadVertical->EnableCollisions(true);
+				}
 
 				// Vertical lamp posts
 				BaseObject* lamp = pWorld->CreateObject<BaseObject>("Vertical Vertical",
@@ -178,6 +192,13 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 				lamp4->SetScale(.1f);
 				lamp4->pPosition = new XMFLOAT3(xOrigin + (RoadSegmentSize * (i - 1)), 0.7f, yOrigin - 1.f);
 				lamp4->renderShader = roadShader;
+
+				if (GetLampCollisionsEnabled()) {
+					lamp->EnableCollisions(true);
+					lamp2->EnableCollisions(true);
+					lamp3->EnableCollisions(true);
+					lamp4->EnableCollisions(true);
+				}
 			}
 
 			// Generate randomly distrubuted buildings across the bottom row
@@ -225,6 +246,10 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->SetScale(building.Scale);
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin + building.YOffset);
+
+					if (GetBuildingCollisionsEnabled()) {
+						buildingObject->EnableCollisions(true);
+					}
 
 					c++;
 				}
@@ -479,4 +504,22 @@ void CityGenerator::Think(World* pWorld) {
 		}
 
 	}
+}
+
+// Collisions
+
+bool CityGenerator::GetBuildingCollisionsEnabled() {
+	return BuildingCollisionsEnabled;
+}
+
+bool CityGenerator::GetLampCollisionsEnabled() {
+	return LampCollisionsEnabled;
+}
+
+bool CityGenerator::GetVehicleCollisionsEnabled() {
+	return VehicleCollisionsEnabled;
+}
+
+bool CityGenerator::GetRoadCollisionsEnabled() {
+	return RoadCollisionsEnabled;
 }
