@@ -58,7 +58,7 @@ World::World()
 	pGenerator->RoadSegmentSize = 36.f;
 	pGenerator->RoadSegmentScale = 0.01f;
 	pGenerator->RoadLength = 5;
-	pGenerator->NumRoads = 5;
+	pGenerator->NumRoads = 15;
 
 	pGenerator->StraightRoadModel = "../Engine/data/city/roads/road_2_lane_straight.obj";
 	pGenerator->StraightRoadMaterial = L"../Engine/data/city/roads/road_2_lane_straight.dds";
