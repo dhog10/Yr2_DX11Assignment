@@ -1,10 +1,19 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: BaseObject.h
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #pragma once
 
 #include "d3dclass.h"
 #include "bumpmodelclass.h"
+#include "BoundingBox.h"
 #include <map>
 
-enum RenderShader { SHADED, UNLIT, SHADED_NO_BUMP };
+enum RenderShader { SHADED, UNLIT, SHADED_NO_BUMP, SHADED_FOG };
 
 class BaseObject
 {
@@ -19,6 +28,10 @@ private:
 	BaseObject* pParent;
 
 	bool Initialized;
+
+	// Collision
+	bool CollisionEnabled;
+	BoundingBox* pBoundingBox = 0;
 public:
 	BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2);
 	~BaseObject();
@@ -65,5 +78,10 @@ public:
 	class World* pWorld;
 
 	bool operator==(BaseObject other);
+
+	// Collision
+	void EnableCollisions(bool enabled);
+	bool GetCollisionsEnabled();
+	void ComputeBoundingBox();
 };
 

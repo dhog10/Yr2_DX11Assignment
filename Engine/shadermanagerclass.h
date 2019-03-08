@@ -12,6 +12,7 @@
 #include "textureshaderclass.h"
 #include "lightshaderclass.h"
 #include "bumpmapshaderclass.h"
+#include "fogshaderclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,12 +33,16 @@ public:
 	bool RenderLightShader(ID3D11DeviceContext*, int, const XMMATRIX&, const XMMATRIX&, const XMMATRIX&, ID3D11ShaderResourceView*,
 		XMFLOAT3, XMFLOAT4, XMFLOAT4, XMFLOAT3, XMFLOAT4, float);
 
+	bool RenderFogShader(ID3D11DeviceContext*, int, const XMMATRIX&, const XMMATRIX&, const XMMATRIX&, ID3D11ShaderResourceView*,
+		XMFLOAT3, XMFLOAT4, XMFLOAT4, XMFLOAT3, XMFLOAT4, float);
+
 	bool RenderBumpMapShader(ID3D11DeviceContext*, int, const XMMATRIX&, const XMMATRIX&, const XMMATRIX&, ID3D11ShaderResourceView*,
 		ID3D11ShaderResourceView*, XMFLOAT3, XMFLOAT4);
 
 private:
 	TextureShaderClass* m_TextureShader;
 	LightShaderClass* m_LightShader;
+	FogShaderClass* m_FogShader;
 	BumpMapShaderClass* m_BumpMapShader;
 };
 

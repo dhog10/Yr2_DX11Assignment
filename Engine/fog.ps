@@ -28,6 +28,7 @@ struct PixelInputType
     float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
 	float3 viewDirection : TEXCOORD1;
+	float fogValue : FOG;
 };
 
 
@@ -43,6 +44,10 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	float4 color;
 	float3 reflection;
     float4 specular;
+	float4 fogColor;
+
+	// Set the color of the fog to grey.
+    fogColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
@@ -81,5 +86,5 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Add the specular component last to the output color.
     color = saturate(color + specular);
 
-    return color;
+    return input.fogValue * color + (1.0 - input.fogValue) * fogColor;
 }

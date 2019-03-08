@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+Filename: World.h
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #include "BaseObject.h"
 #include <vector>
 #include <map>

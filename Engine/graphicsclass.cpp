@@ -395,10 +395,9 @@ bool GraphicsClass::Render(float rotation)
 
 	m_Camera->SetPosition(pWorld->pCameraPosition->x, pWorld->pCameraPosition->y, pWorld->pCameraPosition->z);
 
-	
-
 	XMMATRIX worldMatrix, worldMatrix2, viewMatrix, projectionMatrix, translateMatrix;
 	bool result;
+
 
 
 	// Clear the buffers to begin the scene.
@@ -407,27 +406,11 @@ bool GraphicsClass::Render(float rotation)
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
-
-	// Enable additive blending so the clouds blend with the sky dome color.
-	//m_D3D->EnableSecondBlendState();
-
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Render the sky plane using the sky plane shader.
 
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0, 2000, 0));
-
-	m_SkyPlane->Render(m_D3D->GetDeviceContext());
-	m_SkyPlaneShader->Render(m_D3D->GetDeviceContext(), m_SkyPlane->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_SkyPlane->GetCloudTexture1(), m_SkyPlane->GetCloudTexture2(), m_SkyPlane->GetTranslation(0), m_SkyPlane->GetTranslation(1),
-		m_SkyPlane->GetTranslation(2), m_SkyPlane->GetTranslation(3), m_SkyPlane->GetBrightness());
-
-	m_D3D->GetWorldMatrix(worldMatrix);
-
-	// Turn off blending.
-	// m_D3D->TurnOffAlphaBlending();
 
 	// World operations such as rendering and object think invoking
 	if (pWorld) {
@@ -502,6 +485,10 @@ bool GraphicsClass::Render(float rotation)
 				pModelClass->Render(m_D3D->GetDeviceContext());
 				result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 					pModelClass->GetColorTexture(), relativePosition, m_Light->GetDiffuseColor(), ambientColor, m_Camera->GetPosition(), specularColor, specularPower);
+			case RenderShader::SHADED_FOG:
+				pModelClass->Render(m_D3D->GetDeviceContext());
+				result = m_ShaderManager->RenderFogShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+					pModelClass->GetColorTexture(), relativePosition, m_Light->GetDiffuseColor(), ambientColor, m_Camera->GetPosition(), specularColor, specularPower);
 			case RenderShader::SHADED:
 				pModelClass->Render(m_D3D->GetDeviceContext());
 				result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
@@ -517,8 +504,23 @@ bool GraphicsClass::Render(float rotation)
 		}
 	}
 
+	// Enable additive blending so the clouds blend with the sky dome color.
+	//m_D3D->EnableSecondBlendState();
+
+	// Render the sky plane using the sky plane shader.
+
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0, 2000, 0));
+
+	m_SkyPlane->Render(m_D3D->GetDeviceContext());
+	m_SkyPlaneShader->Render(m_D3D->GetDeviceContext(), m_SkyPlane->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_SkyPlane->GetCloudTexture1(), m_SkyPlane->GetCloudTexture2(), m_SkyPlane->GetTranslation(0), m_SkyPlane->GetTranslation(1),
+		m_SkyPlane->GetTranslation(2), m_SkyPlane->GetTranslation(3), m_SkyPlane->GetBrightness());
+
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
+
+	// Turn off blending.
+	// m_D3D->TurnOffAlphaBlending();
 
 	return true;
 }

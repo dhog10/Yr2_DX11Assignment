@@ -36,6 +36,7 @@ struct PixelInputType
     float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
 	float3 viewDirection : TEXCOORD1;
+	float fogValue : FOG;
 };
 
 
@@ -44,6 +45,7 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 PixelInputType LightVertexShader(VertexInputType input)
 {
+	float4 newCameraPosition = (cameraPosition.x, cameraPosition.y, cameraPosition.z, 0);
     PixelInputType output;
 	float4 worldPosition;
 
@@ -70,6 +72,12 @@ PixelInputType LightVertexShader(VertexInputType input)
 
     // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
     output.viewDirection = cameraPosition.xyz - worldPosition.xyz;
+	
+	// Calculate the camera position.
+    newCameraPosition = mul(input.position, worldMatrix);
+    newCameraPosition = mul(newCameraPosition, viewMatrix);
+
+	output.fogValue = saturate((100.0 - newCameraPosition.z) / (100.0 / 50.0));
 
     // Normalize the viewing direction vector.
     output.viewDirection = normalize(output.viewDirection);

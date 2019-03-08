@@ -1,3 +1,11 @@
+/**
+NIEE2211 - Computer Games Studio 2
+
+Filename: CityGenerator.h
+Author: Daniel Lush
+Date: 13/12/2018
+*/
+
 #pragma once
 #include "d3dclass.h"
 #include <vector>
@@ -31,6 +39,13 @@ private:
 	float LastCarSpawn;
 
 	void AddCar(char* model, WCHAR* material, float scale, float yaw);
+
+	// Collisions
+
+	bool BuildingCollisionsEnabled;
+	bool LampCollisionsEnabled;
+	bool VehicleCollisionsEnabled;
+	bool RoadCollisionsEnabled;
 public:
 	CityGenerator();
 	~CityGenerator();
@@ -43,6 +58,8 @@ public:
 	WCHAR* StraightRoadMaterial;
 	char* CrossRoadsModel;
 	WCHAR* CrossRoadsMaterial;
+	char* LampModel;
+	WCHAR* LampMaterial;
 
 	float RoadSegmentSize;
 	float RoadSegmentScale;
@@ -51,4 +68,10 @@ public:
 
 	void GenerateWorld(World* pWorld);
 	void AddBuilding(char* model, WCHAR* material, float width, float height, float scale, float XOffset, float YOffset);
+
+	// Collisions
+	bool GetBuildingCollisionsEnabled();
+	bool GetLampCollisionsEnabled();
+	bool GetVehicleCollisionsEnabled();
+	bool GetRoadCollisionsEnabled();
 };
