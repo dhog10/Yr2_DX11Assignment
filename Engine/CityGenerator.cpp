@@ -105,8 +105,8 @@ CityGenerator::~CityGenerator() {
 }
 
 void CityGenerator::GenerateWorld(World* pWorld) {
-	RenderShader roadShader = RenderShader::SHADED;
-	RenderShader buildingShader = RenderShader::SHADED;
+	RenderShader roadShader = RenderShader::SHADED_NO_BUMP;
+	RenderShader buildingShader = RenderShader::SHADED_NO_BUMP;
 
 	for (int x = 0; x < NumRoads; x++) {
 		for (int y = 0; y < NumRoads; y++) {
