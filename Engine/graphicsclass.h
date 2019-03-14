@@ -1,3 +1,5 @@
+#pragma once
+
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: graphicsclass.h
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,13 +44,15 @@ public:
 	void Shutdown();
 	bool Frame();
 	XMFLOAT3* pCameraVelocity;
+	D3DClass* m_D3D;
+	CameraClass* m_Camera;
 private:
 	bool Render(float);
 
 private:
-	D3DClass* m_D3D;
+	
 	ShaderManagerClass* m_ShaderManager;
-	CameraClass* m_Camera;
+	
 	LightClass* m_Light;
 	ModelClass* m_Model1;
 	ModelClass* m_Model2;
