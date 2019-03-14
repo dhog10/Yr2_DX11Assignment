@@ -3,13 +3,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: graphicsclass.h
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _GRAPHICSCLASS_H_
-#define _GRAPHICSCLASS_H_
 
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
+
+#ifndef GCLASS
+#define GCLASS
+
 #include "d3dclass.h"
 #include "shadermanagerclass.h"
 #include "cameraclass.h"
@@ -20,6 +22,10 @@
 
 #include "skyplaneclass.h"
 #include "skyplaneshaderclass.h"
+
+#endif // !GCLASS
+
+
 
 /////////////
 // GLOBALS //
@@ -65,5 +71,3 @@ private:
 
 	double LastTime;
 };
-
-#endif

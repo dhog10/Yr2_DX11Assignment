@@ -1,7 +1,9 @@
 #pragma once
 
-#include "graphicsclass.h"
+
 #include "textclass.h"
+#include "graphicsclass.h"
+
 
 class CollisionUtils
 {
@@ -15,4 +17,3 @@ public:
 
 	TextClass* m_Text;
 };
-
