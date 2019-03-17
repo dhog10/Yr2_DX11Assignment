@@ -1,13 +1,17 @@
+#pragma once
+
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: graphicsclass.h
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _GRAPHICSCLASS_H_
-#define _GRAPHICSCLASS_H_
 
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
+
+#ifndef GCLASS
+#define GCLASS
+
 #include "d3dclass.h"
 #include "shadermanagerclass.h"
 #include "cameraclass.h"
@@ -18,6 +22,10 @@
 
 #include "skyplaneclass.h"
 #include "skyplaneshaderclass.h"
+
+#endif // !GCLASS
+
+
 
 /////////////
 // GLOBALS //
@@ -42,13 +50,15 @@ public:
 	void Shutdown();
 	bool Frame();
 	XMFLOAT3* pCameraVelocity;
+	D3DClass* m_D3D;
+	CameraClass* m_Camera;
 private:
 	bool Render(float);
 
 private:
-	D3DClass* m_D3D;
+	
 	ShaderManagerClass* m_ShaderManager;
-	CameraClass* m_Camera;
+	
 	LightClass* m_Light;
 	ModelClass* m_Model1;
 	ModelClass* m_Model2;
@@ -61,5 +71,3 @@ private:
 
 	double LastTime;
 };
-
-#endif
