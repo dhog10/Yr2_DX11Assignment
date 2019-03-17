@@ -54,7 +54,7 @@ public:
 	CameraClass* m_Camera;
 private:
 	bool Render(float);
-
+	HWND mHWnd;
 private:
 	
 	ShaderManagerClass* m_ShaderManager;

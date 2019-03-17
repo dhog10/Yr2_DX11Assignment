@@ -1,14 +1,19 @@
 #pragma once
 
-
 #include "textclass.h"
-#include "graphicsclass.h"
 
+class GraphicsClass;
+
+namespace Collision {
+	enum CollisionDetectionType {
+		SPHERE,
+	};
+}
 
 class CollisionUtils
 {
 public:
-	void TestIntersection(int mouseX, int mouseY);
+	bool TestIntersection(Collision::CollisionDetectionType detectionType, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, int mouseX, int mouseY);
 	bool RaySphereIntersect(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, float radius);
 
 	GraphicsClass* pGraphicsClass;

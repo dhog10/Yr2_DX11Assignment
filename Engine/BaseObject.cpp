@@ -240,6 +240,9 @@ void BaseObject::EnableCollisions(bool enabled) {
 
 	if (enabled) {
 		ComputeBoundingBox();
+
+		pCollisionUtil = new CollisionUtils();
+		
 	}
 	else {
 		if (pBoundingBox != 0) {

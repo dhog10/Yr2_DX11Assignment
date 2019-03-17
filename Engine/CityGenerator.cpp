@@ -297,6 +297,10 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin - building.YOffset + (RoadSegmentSize * (RoadLength - 1)));
 					buildingObject->SetAngle(0.f, 180.f, 0.f);
+					
+					if (GetBuildingCollisionsEnabled()) {
+						buildingObject->EnableCollisions(true);
+					}
 
 					c++;
 				}
@@ -339,6 +343,10 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + building.YOffset + RoadSegmentSize, 0.f, yOrigin + xProgress + building.XOffset);
 					buildingObject->SetAngle(0.f, 90.f, 0.f);
 
+					if (GetBuildingCollisionsEnabled()) {
+						buildingObject->EnableCollisions(true);
+					}
+
 					c++;
 				}
 			}
@@ -379,6 +387,10 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin - building.YOffset + (RoadSegmentSize * RoadLength), 0.f, yOrigin + xProgress + building.XOffset);
 					buildingObject->SetAngle(0.f, -90.f, 0.f);
+
+					if (GetBuildingCollisionsEnabled()) {
+						buildingObject->EnableCollisions(true);
+					}
 
 					c++;
 				}

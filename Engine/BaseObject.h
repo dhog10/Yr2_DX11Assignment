@@ -8,11 +8,16 @@ Date: 13/12/2018
 
 #pragma once
 
-// #include "CollisionUtils.h"
+#ifndef BOBJECT
+#define BOBJECT
+
+#include "CollisionUtils.h"
 #include "d3dclass.h"
 #include "bumpmodelclass.h"
 #include "BoundingBox.h"
 #include <map>
+
+#endif
 
 enum RenderShader { SHADED, UNLIT, SHADED_NO_BUMP, SHADED_FOG };
 
@@ -84,5 +89,6 @@ public:
 	void EnableCollisions(bool enabled);
 	bool GetCollisionsEnabled();
 	void ComputeBoundingBox();
+	CollisionUtils* pCollisionUtil;
 };
 

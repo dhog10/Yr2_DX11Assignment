@@ -1,12 +1,11 @@
 #include "CollisionUtils.h"
+#include "graphicsclass.h"
 #include "d3dclass.h"
 
-
-
-void CollisionUtils::TestIntersection(int mouseX, int mouseY)
+bool CollisionUtils::TestIntersection(Collision::CollisionDetectionType detectionType, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, int mouseX, int mouseY)
 {
 	float pointX, pointY;
-	XMMATRIX projectionMatrix, viewMatrix, inverseViewMatrix, worldMatrix, translateMatrix, inverseWorldMatrix;
+	XMMATRIX inverseViewMatrix, inverseWorldMatrix;
 	XMFLOAT3 direction, origin;
 	XMVECTOR rayOrigin, rayDirection;
 
@@ -16,30 +15,26 @@ void CollisionUtils::TestIntersection(int mouseX, int mouseY)
 	pointX = ((2.0f * (float)mouseX) / (float)m_screenWidth) - 1.0f;
 	pointY = (((2.0f * (float)mouseY) / (float)m_screenHeight) - 1.0f) * -1.0f;
 
+	// Adjust the points using the projection matrix to account for the aspect ratio of the viewport.
 	XMFLOAT4X4 projection4x4;
 	XMStoreFloat4x4(&projection4x4, projectionMatrix);
 
-	// Adjust the points using the projection matrix to account for the aspect ratio of the viewport.
-	pGraphicsClass->m_D3D->GetProjectionMatrix(projectionMatrix);
 	pointX = pointX / projection4x4._11;
 	pointY = pointY / projection4x4._22;
 
 	// Get the inverse of the view matrix.
-	pGraphicsClass->m_Camera->GetViewMatrix(viewMatrix);
 	inverseViewMatrix = XMMatrixInverse(NULL, viewMatrix);
 
+	XMFLOAT4X4 view4x4;
+	XMStoreFloat4x4(&view4x4, inverseViewMatrix);
+
 	// Calculate the direction of the picking ray in view space.
-	direction.x = (pointX * projection4x4._11) + (pointY * projection4x4._21) + projection4x4._31;
-	direction.y = (pointX * projection4x4._12) + (pointY * projection4x4._22) + projection4x4._32;
-	direction.z = (pointX * projection4x4._13) + (pointY * projection4x4._23) + projection4x4._33;
+	direction.x = (pointX * view4x4._11) + (pointY * view4x4._21) + view4x4._31;
+	direction.y = (pointX * view4x4._12) + (pointY * view4x4._22) + view4x4._32;
+	direction.z = (pointX * view4x4._13) + (pointY * view4x4._23) + view4x4._33;
 
 	// Get the origin of the picking ray which is the position of the camera.
 	origin = pGraphicsClass->m_Camera->GetPosition();
-
-	// Get the world matrix and translate to the location of the sphere.
-	pGraphicsClass->m_D3D->GetWorldMatrix(worldMatrix);
-	translateMatrix = XMMatrixTranslation(-5.0f, 1.0f, 5.0f);
-	XMMatrixMultiply(worldMatrix, translateMatrix);
 
 	// Now get the inverse of the translated world matrix.
 	inverseWorldMatrix = XMMatrixInverse(NULL, worldMatrix);
@@ -58,21 +53,24 @@ void CollisionUtils::TestIntersection(int mouseX, int mouseY)
 	direction.y = direction.y / rayDirectionLength;
 	direction.z = direction.z / rayDirectionLength;
 
+	XMFLOAT3 rayOriginFloat;	
+	XMStoreFloat3(&rayOriginFloat, rayOrigin);
+
 	// Now perform the ray-sphere intersection test.
-	intersect = RaySphereIntersect(origin, direction, 1.0f);
+	intersect = RaySphereIntersect(rayOriginFloat, direction, 10000.0f);
 
 	if (intersect == true)
 	{
 		// If it does intersect then set the intersection to "yes" in the text string that is displayed to the screen.
-		result = m_Text->SetIntersection(true, pGraphicsClass->m_D3D->GetDeviceContext());
+		// result = m_Text->SetIntersection(true, pGraphicsClass->m_D3D->GetDeviceContext());
 	}
 	else
 	{
 		// If not then set the intersection to "No".
-		result = m_Text->SetIntersection(false, pGraphicsClass->m_D3D->GetDeviceContext());
+		// result = m_Text->SetIntersection(false, pGraphicsClass->m_D3D->GetDeviceContext());
 	}
 
-	return;
+	return intersect;
 }
 
 bool CollisionUtils::RaySphereIntersect(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, float radius)

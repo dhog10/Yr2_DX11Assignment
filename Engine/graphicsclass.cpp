@@ -39,6 +39,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 {
 	bool result;
 
+	mHWnd = hwnd;
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -299,6 +300,15 @@ bool GraphicsClass::Render(float rotation)
 {
 	pWorld->Think();
 
+	RECT wRect;
+	GetWindowRect(mHWnd, &wRect);
+	COORD wCoord = { wRect.left, wRect.top };
+
+	float scrW = (wRect.right - wRect.left);
+	float scrH = (wRect.bottom - wRect.top);
+	int mouseX = wCoord.X + (scrW * 0.5);
+	int mouseY = wCoord.Y + (scrH * 0.5);
+
 	// Here i calculate the mouse movement since the last frame to rotate the camera
 	// This allows for a mouse controlled FPS style camera
 
@@ -309,8 +319,11 @@ bool GraphicsClass::Render(float rotation)
 	POINT cursorPos;
 	GetCursorPos(&cursorPos);
 
-	int fixedCursorX = 100;
-	int fixedCursorY = 100;
+	int fixedCursorX = mouseX;
+	int fixedCursorY = mouseY;
+
+	mouseX = mouseX - wRect.left;
+	mouseY = mouseY - wRect.top;
 
 	int diffX = cursorPos.x - lastCursorPos.x;
 	float diffY = cursorPos.y - lastCursorPos.y;
@@ -346,6 +359,12 @@ bool GraphicsClass::Render(float rotation)
 	}
 	if (GetKeyState('D') & 0x8000) {
 		pCameraVelocity->x += 1.f;
+	}
+
+	bool mouseClicked = false;
+	if ((GetKeyState(VK_LBUTTON) & 0x80) != 0)
+	{
+		mouseClicked = true;
 	}
 
 	if (pCameraVelocity->y < -1) { pCameraVelocity->y = -1; }
@@ -500,6 +519,19 @@ bool GraphicsClass::Render(float rotation)
 				result = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 					pModelClass->GetColorTexture());
 				break;
+			}
+
+			if ((true || mouseClicked) && pObject->GetCollisionsEnabled()) {
+				pObject->pCollisionUtil->pGraphicsClass = this;
+				pObject->pCollisionUtil->m_screenWidth = scrW;
+				pObject->pCollisionUtil->m_screenHeight = scrH;
+
+				if (pObject->pCollisionUtil->TestIntersection(Collision::CollisionDetectionType::SPHERE, worldMatrix, viewMatrix, projectionMatrix, mouseX, mouseY)) {
+					pObject->SetScale(0.005f);
+				}
+				else {
+					pObject->SetScale(0.001f);
+				}
 			}
 		}
 	}
