@@ -38,6 +38,10 @@ private:
 	// Collision
 	bool CollisionEnabled;
 	BoundingBox* pBoundingBox = 0;
+
+protected:
+	bool mDestroyed;
+
 public:
 	BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2);
 	~BaseObject();
@@ -75,6 +79,8 @@ public:
 	virtual void OnRender(float DeltaTime);
 	void OnCreate();
 	void OnDestroy();
+	void Destroy();
+	bool IsDestroyed();
 
 	bool bRotateFirst;
 	bool bDontTransformParentRotation;
@@ -86,9 +92,12 @@ public:
 	bool operator==(BaseObject other);
 
 	// Collision
+	float mCollisionRadius;
 	void EnableCollisions(bool enabled);
 	bool GetCollisionsEnabled();
 	void ComputeBoundingBox();
+	virtual void DoClick();
+
 	CollisionUtils* pCollisionUtil;
 };
 

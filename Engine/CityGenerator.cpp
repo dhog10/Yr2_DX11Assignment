@@ -8,12 +8,15 @@ Date: 13/12/2018
 
 #include "BaseObject.h"
 #include "World.h"
+#include "Parachuter.h"
 #include "CityGenerator.h"
 
 CityGenerator::CityGenerator() {
 	pBuildings = new std::vector<CityBuilding>();
 	pCarTypes = new std::vector<CityCar>();
 	Cars = std::vector<BaseObject*>();
+	Parachuters = std::vector<Parachuter*>();
+
 	MaxCars = 100;
 	LastCarSpawn = 0.f;
 	LampModel = "../Engine/data/city/lamp.obj";
@@ -347,6 +350,9 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 						buildingObject->EnableCollisions(true);
 					}
 
+					int maxX = RoadSegmentSize * RoadLength * NumRoads;
+					int maxY = RoadSegmentSize * RoadLength * NumRoads;
+
 					c++;
 				}
 			}
@@ -426,6 +432,19 @@ void CityGenerator::Think(World* pWorld) {
 	if (this->pCarTypes->size() == 0) { return; }
 
 	float time = timeGetTime();
+
+	if (time > lastParachuteSpawn + 1000) {
+		lastParachuteSpawn = time;
+
+		Parachuter* parachuter = pWorld->CreateObject<Parachuter>("Car",
+			"../Engine/data/parachute.obj",
+			L"../Engine/data/white.dds",
+			L"../Engine/data/white.dds");
+		parachuter->renderShader = RenderShader::SHADED_NO_BUMP;
+		parachuter->pVelocity = new XMFLOAT3(0, -1, 0);
+		parachuter->EnableCollisions(true);
+	}
+
 	if (time < LastCarSpawn + 1000) { return; }
 	LastCarSpawn = time;
 

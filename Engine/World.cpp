@@ -1,5 +1,6 @@
  #include "World.h"
 
+#include "Parachuter.h"
 #include "StellarBody.h"
 #include "BaseObject.h"
 
@@ -91,7 +92,7 @@ std::vector<BaseObject*>* World::GetObjects()
 
 // Create an object, and perform initialization to it
 
-template<class T>
+/*template<class T>
 T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
 {
 	T* pObject = new T(Name, ModelPath, MaterialPath, MaterialPath2);
@@ -105,7 +106,7 @@ T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	pObject->OnCreate();
 
 	return pObject;
-}
+}*/
 
 // Remove an object from the world
 
@@ -118,8 +119,6 @@ void World::DestroyObject(BaseObject* pObject)
 	}
 
 	pObject->OnDestroy();
-
-	delete pObject;
 }
 
 void World::Think() {

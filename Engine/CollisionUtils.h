@@ -13,7 +13,7 @@ namespace Collision {
 class CollisionUtils
 {
 public:
-	bool TestIntersection(Collision::CollisionDetectionType detectionType, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, int mouseX, int mouseY);
+	bool TestIntersection(Collision::CollisionDetectionType detectionType, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, int mouseX, int mouseY, float collisionRadius);
 	bool RaySphereIntersect(XMFLOAT3 rayOrigin, XMFLOAT3 rayDirection, float radius);
 
 	GraphicsClass* pGraphicsClass;

@@ -43,14 +43,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
-	if(!m_D3D)
+	if (!m_D3D)
 	{
 		return false;
 	}
 
 	// Initialize the Direct3D object.
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if(!result)
+	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
 		return false;
@@ -58,14 +58,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Create the shader manager object.
 	m_ShaderManager = new ShaderManagerClass;
-	if(!m_ShaderManager)
+	if (!m_ShaderManager)
 	{
 		return false;
 	}
 
 	// Initialize the shader manager object.
 	result = m_ShaderManager->Initialize(m_D3D->GetDevice(), hwnd);
-	if(!result)
+	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
 		return false;
@@ -73,17 +73,17 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Create the camera object.
 	m_Camera = new CameraClass;
-	if(!m_Camera)
+	if (!m_Camera)
 	{
 		return false;
 	}
 
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
-	
+
 	// Create the light object.
 	m_Light = new LightClass;
-	if(!m_Light)
+	if (!m_Light)
 	{
 		return false;
 	}
@@ -97,14 +97,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Create the model object.
 	m_Model1 = new ModelClass;
-	if(!m_Model1)
+	if (!m_Model1)
 	{
 		return false;
 	}
 
 	// Initialize the model object.
 	result = m_Model1->Initialize(m_D3D->GetDevice(), "../Engine/data/donut-tri.txt", L"../Engine/data/metal2.dds");
-	if(!result)
+	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the first model object.", L"Error", MB_OK);
 		return false;
@@ -112,7 +112,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Create the second model object.
 	m_Model2 = new ModelClass;
-	if(!m_Model2)
+	if (!m_Model2)
 	{
 		return false;
 	}
@@ -120,7 +120,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 	// Initialize the second model object.
 	//result = m_Model2->Initialize(m_D3D->GetDevice(), "../Engine/data/cube-ninjaHead.txt", L"../Engine/data/metal.dds");
 	result = m_Model2->Initialize(m_D3D->GetDevice(), "../Engine/data/new-ninjaHead.txt", L"../Engine/data/metal.dds");
-	if(!result)
+	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the second model object.", L"Error", MB_OK);
 		return false;
@@ -128,15 +128,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Create the third bump model object for models with normal maps and related vectors.
 	m_Model3 = new BumpModelClass;
-	if(!m_Model3)
+	if (!m_Model3)
 	{
 		return false;
 	}
 
 	// Initialize the bump model object.
-	result = m_Model3->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/stone.dds", 
-								  L"../Engine/data/normal.dds");
-	if(!result)
+	result = m_Model3->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/stone.dds",
+		L"../Engine/data/normal.dds");
+	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the third model object.", L"Error", MB_OK);
 		return false;
@@ -214,21 +214,21 @@ void GraphicsClass::Shutdown()
 	}
 
 	// Release the model objects.
-	if(m_Model1)
+	if (m_Model1)
 	{
 		m_Model1->Shutdown();
 		delete m_Model1;
 		m_Model1 = 0;
 	}
 
-	if(m_Model2)
+	if (m_Model2)
 	{
 		m_Model2->Shutdown();
 		delete m_Model2;
 		m_Model2 = 0;
 	}
 
-	if(m_Model3)
+	if (m_Model3)
 	{
 		m_Model3->Shutdown();
 		delete m_Model3;
@@ -236,21 +236,21 @@ void GraphicsClass::Shutdown()
 	}
 
 	// Release the light object.
-	if(m_Light)
+	if (m_Light)
 	{
 		delete m_Light;
 		m_Light = 0;
 	}
 
 	// Release the camera object.
-	if(m_Camera)
+	if (m_Camera)
 	{
 		delete m_Camera;
 		m_Camera = 0;
 	}
 
 	// Release the shader manager object.
-	if(m_ShaderManager)
+	if (m_ShaderManager)
 	{
 		m_ShaderManager->Shutdown();
 		delete m_ShaderManager;
@@ -258,7 +258,7 @@ void GraphicsClass::Shutdown()
 	}
 
 	// Release the D3D object.
-	if(m_D3D)
+	if (m_D3D)
 	{
 		m_D3D->Shutdown();
 		delete m_D3D;
@@ -277,17 +277,17 @@ bool GraphicsClass::Frame()
 
 	// Update the rotation variable each frame.
 	rotation += (float)XM_PI * 0.005f;
-	if(rotation > 360.0f)
+	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
 	}
-	
+
 	// Do the sky plane frame processing.
 	m_SkyPlane->Frame();
 
 	// Render the graphics scene.
 	result = Render(rotation);
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
@@ -378,8 +378,8 @@ bool GraphicsClass::Render(float rotation)
 	XMVECTOR up = XMLoadFloat3(new XMFLOAT3(0.f, 1.f, 0.f));
 	// Find the camera forward heading
 	XMFLOAT3* pCameraHeading = new XMFLOAT3(
-		sin(pWorld->pCameraAngle->y * degToRad), 
-		-sin(pWorld->pCameraAngle->x * degToRad), 
+		sin(pWorld->pCameraAngle->y * degToRad),
+		-sin(pWorld->pCameraAngle->x * degToRad),
 		cos(pWorld->pCameraAngle->y * degToRad)
 	);
 	// Normalize the camera forward heading
@@ -462,7 +462,7 @@ bool GraphicsClass::Render(float rotation)
 			m_D3D->GetProjectionMatrix(projectionMatrix);
 
 			worldMatrix = pObject->GetWorldMatrix(worldMatrix);
-			
+
 			// Store the global xyz coordinates of the object in an XMFLOAT3
 			XMVECTOR worldPos = worldMatrix.r[3];
 			XMFLOAT3 objectPos;
@@ -494,8 +494,8 @@ bool GraphicsClass::Render(float rotation)
 
 			// Render the object to scene
 
-			XMFLOAT4 ambientColor = XMFLOAT4(0.22f, 0.21f, 0.2f,1.f);
-			XMFLOAT4 specularColor = XMFLOAT4(0.2f,0.2f,0.2f, 0.f);
+			XMFLOAT4 ambientColor = XMFLOAT4(0.22f, 0.21f, 0.2f, 1.f);
+			XMFLOAT4 specularColor = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.f);
 			float specularPower = 15;
 
 			// This switch statement allows each object to control which shader is used when rendering it
@@ -521,17 +521,26 @@ bool GraphicsClass::Render(float rotation)
 				break;
 			}
 
-			if ((true || mouseClicked) && pObject->GetCollisionsEnabled()) {
+			if (mouseClicked && pObject->GetCollisionsEnabled()) {
 				pObject->pCollisionUtil->pGraphicsClass = this;
 				pObject->pCollisionUtil->m_screenWidth = scrW;
 				pObject->pCollisionUtil->m_screenHeight = scrH;
 
-				if (pObject->pCollisionUtil->TestIntersection(Collision::CollisionDetectionType::SPHERE, worldMatrix, viewMatrix, projectionMatrix, mouseX, mouseY)) {
-					pObject->SetScale(0.005f);
+				if (pObject->pCollisionUtil->TestIntersection(Collision::CollisionDetectionType::SPHERE, worldMatrix, viewMatrix, projectionMatrix, mouseX, mouseY, pObject->mCollisionRadius)) {
+					pObject->DoClick();
+					//pObject->SetScale(0.005f);
 				}
 				else {
-					pObject->SetScale(0.001f);
+					//pObject->SetScale(0.001f);
 				}
+			}
+		}
+
+		for (int i = objects.size() - 1; i >= 0; i--) {
+			BaseObject* pObject = objects[i];
+
+			if (pObject->IsDestroyed()) {
+				pWorld->DestroyObject(pObject);
 			}
 		}
 	}

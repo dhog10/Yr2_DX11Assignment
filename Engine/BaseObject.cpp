@@ -16,6 +16,7 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 {
 	this->Name = Name;
 
+	mDestroyed = false;
 	pScale = new XMFLOAT3(1.f, 1.f, 1.f);
 	pPosition = new XMFLOAT3(0.f, 0.f, 0.f);
 	pVelocity = new XMFLOAT3(0.f, 0.f, 0.f);
@@ -35,6 +36,7 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	bDontTransformParentRotation = false;
 	Initialized = false;
 
+	mCollisionRadius = 10000.0f;
 	CollisionEnabled = false;
 }
 
@@ -96,6 +98,16 @@ void BaseObject::OnCreate()
 void BaseObject::OnDestroy()
 {
 
+}
+
+void BaseObject::Destroy()
+{
+	mDestroyed = true;
+}
+
+bool BaseObject::IsDestroyed()
+{
+	return mDestroyed;
 }
 
 bool BaseObject::operator==(BaseObject other)
@@ -278,4 +290,8 @@ void BaseObject::ComputeBoundingBox() {
 	}
 	
 	pBoundingBox = new BoundingBox(pMins, pMaxs);
+}
+
+void BaseObject::DoClick() {
+
 }

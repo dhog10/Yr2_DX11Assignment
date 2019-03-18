@@ -8,6 +8,7 @@ Date: 13/12/2018
 
 #pragma once
 #include "d3dclass.h"
+#include "Parachuter.h"
 #include <vector>
 
 class World;
@@ -35,8 +36,11 @@ class CityGenerator {
 private:
 	std::vector<CityCar>* pCarTypes;
 	std::vector<class BaseObject*> Cars;
+	std::vector<class Parachuter*> Parachuters;
+
 	int MaxCars;
 	float LastCarSpawn;
+	float lastParachuteSpawn;
 
 	void AddCar(char* model, WCHAR* material, float scale, float yaw);
 

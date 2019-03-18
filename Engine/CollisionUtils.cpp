@@ -2,7 +2,7 @@
 #include "graphicsclass.h"
 #include "d3dclass.h"
 
-bool CollisionUtils::TestIntersection(Collision::CollisionDetectionType detectionType, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, int mouseX, int mouseY)
+bool CollisionUtils::TestIntersection(Collision::CollisionDetectionType detectionType, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, int mouseX, int mouseY, float circleSize)
 {
 	float pointX, pointY;
 	XMMATRIX inverseViewMatrix, inverseWorldMatrix;
@@ -57,7 +57,7 @@ bool CollisionUtils::TestIntersection(Collision::CollisionDetectionType detectio
 	XMStoreFloat3(&rayOriginFloat, rayOrigin);
 
 	// Now perform the ray-sphere intersection test.
-	intersect = RaySphereIntersect(rayOriginFloat, direction, 10000.0f);
+	intersect = RaySphereIntersect(rayOriginFloat, direction, circleSize);
 
 	if (intersect == true)
 	{

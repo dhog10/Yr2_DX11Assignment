@@ -114,6 +114,9 @@
     <ClInclude Include="fontshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Parachuter.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bumpmapshaderclass.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="fontshaderclass.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parachuter.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

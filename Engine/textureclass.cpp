@@ -12,6 +12,7 @@ TextureClass::TextureClass()
 
 TextureClass::TextureClass(const TextureClass& other)
 {
+	m_texture = 0;
 }
 
 

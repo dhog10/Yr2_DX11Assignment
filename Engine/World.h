@@ -6,11 +6,11 @@ Author: Daniel Lush
 Date: 13/12/2018
 */
 
-#include "BaseObject.h"
 #include <vector>
 #include <map>
-
 #include "CityGenerator.h"
+
+class BaseObject;
 
 class World
 {
@@ -29,7 +29,19 @@ public:
 	std::vector<BaseObject*>* GetObjects();
 
 	template<class T>
-	T* CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2);
+	T* CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2) {
+		T* pObject = new T(Name, ModelPath, MaterialPath, MaterialPath2);
+		pObject->ID = CurrentID;
+		pObject->pWorld = this;
+		CurrentID++;
+
+		// Add to object array & call create functions
+		Objects->push_back((BaseObject*)pObject);
+
+		pObject->OnCreate();
+
+		return pObject;
+	}
 
 	XMFLOAT3* pCameraPosition;
 	XMFLOAT3* pCameraAngle;
