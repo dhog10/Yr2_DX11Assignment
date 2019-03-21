@@ -108,13 +108,13 @@ void TextClass::Shutdown()
 }
 
 
-bool TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX orthoMatrix)
+bool TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX orthoMatrix)
 {
 	bool result;
 
 
 	// Draw the first sentence.
-	result = RenderSentence(deviceContext, m_sentence1, worldMatrix, orthoMatrix);
+	result = RenderSentence(deviceContext, m_sentence1, worldMatrix, viewMatrix, orthoMatrix);
 	if(!result)
 	{
 		return false;
@@ -322,7 +322,7 @@ void TextClass::ReleaseSentence(SentenceType** sentence)
 }
 
 
-bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType* sentence, XMMATRIX worldMatrix,
+bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType* sentence, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix)
 {
 	unsigned int stride, offset;
@@ -347,7 +347,7 @@ bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType*
 	pixelColor = XMFLOAT4(sentence->red, sentence->green, sentence->blue, 1.0f);
 
 	// Render the text using the font shader.
-	result = m_FontShader->Render(deviceContext, sentence->indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, m_Font->GetTexture(), 
+	result = m_FontShader->Render(deviceContext, sentence->indexCount, worldMatrix, viewMatrix, orthoMatrix, m_Font->GetTexture(),
 								  pixelColor);
 	if(!result)
 	{
@@ -357,6 +357,12 @@ bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType*
 	return true;
 }
 
+bool TextClass::SetText(const char* text, ID3D11DeviceContext* deviceContext) {
+	char message[11];
+
+	strcpy_s(message, "0123456789");
+	return UpdateSentence(m_sentence1, message, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
+}
 
 bool TextClass::SetIntersection(bool intersection, ID3D11DeviceContext* deviceContext)
 {

@@ -3,7 +3,7 @@
 
 Parachuter::Parachuter(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2) : BaseObject::BaseObject(Name, ModelPath, MaterialPath, MaterialPath2)
 {
-	mCollisionRadius = 10;
+	mCollisionRadius = 17;
 }
 
 

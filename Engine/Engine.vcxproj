@@ -76,6 +76,8 @@
     <None Include="bumpmap.vs" />
     <None Include="fog.ps" />
     <None Include="fog.vs" />
+    <None Include="font.ps" />
+    <None Include="font.vs" />
     <None Include="light.ps" />
     <None Include="light.vs" />
     <None Include="skyplane.ps" />

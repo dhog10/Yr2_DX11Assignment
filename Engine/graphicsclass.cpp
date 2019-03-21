@@ -80,6 +80,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	XMMATRIX baseViewMatrix;
+	m_Camera->GetViewMatrix(baseViewMatrix);
 
 	// Create the light object.
 	m_Light = new LightClass;
@@ -189,6 +191,23 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 		pObject->Initialize(m_D3D);
 	}
 
+	// Text & font
+
+	// Create the text object.
+	m_Text = new TextClass;
+	if (!m_Text)
+	{
+		return false;
+	}
+
+	// Initialize the text object.
+	result = m_Text->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
+
 	LastTime = timeGetTime();
 
 	return true;
@@ -219,6 +238,14 @@ void GraphicsClass::Shutdown()
 		m_Model1->Shutdown();
 		delete m_Model1;
 		m_Model1 = 0;
+	}
+
+	// Release the text object.
+	if (m_Text)
+	{
+		m_Text->Shutdown();
+		delete m_Text;
+		m_Text = 0;
 	}
 
 	if (m_Model2)
@@ -418,6 +445,7 @@ bool GraphicsClass::Render(float rotation)
 	bool result;
 
 
+	
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -545,23 +573,38 @@ bool GraphicsClass::Render(float rotation)
 		}
 	}
 
-	// Enable additive blending so the clouds blend with the sky dome color.
-	//m_D3D->EnableSecondBlendState();
+	/////////////// Render the text strings. ///////////////
+	XMMATRIX orthoMatrix;
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
 
-	// Render the sky plane using the sky plane shader.
+	// Get the view, projection, and world matrices from the camera and D3D objects.
+	// m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetOrthoMatrix(orthoMatrix);
 
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0, 2000, 0));
+	// Turn off the Z buffer to begin all 2D rendering.
+	m_D3D->TurnZBufferOff();
 
-	m_SkyPlane->Render(m_D3D->GetDeviceContext());
-	m_SkyPlaneShader->Render(m_D3D->GetDeviceContext(), m_SkyPlane->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_SkyPlane->GetCloudTexture1(), m_SkyPlane->GetCloudTexture2(), m_SkyPlane->GetTranslation(0), m_SkyPlane->GetTranslation(1),
-		m_SkyPlane->GetTranslation(2), m_SkyPlane->GetTranslation(3), m_SkyPlane->GetBrightness());
+	// Turn on alpha blending.
+	m_D3D->TurnOnAlphaBlending();
+
+	//m_Text->SetText("Score: 0", m_D3D->GetDeviceContext());
+	m_Text->SetIntersection(true, m_D3D->GetDeviceContext());
+	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, projectionMatrix, orthoMatrix);
+	if (!result)
+	{
+		return false;
+	}
+
+	m_D3D->TurnZBufferOn();
+	m_D3D->TurnOffAlphaBlending();
+
+	///////////////////////////////////////////////////
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
-
-	// Turn off blending.
-	// m_D3D->TurnOffAlphaBlending();
 
 	return true;
 }

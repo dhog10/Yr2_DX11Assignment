@@ -52,6 +52,7 @@ public:
 	XMFLOAT3* pCameraVelocity;
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
+	TextClass* m_Text;
 private:
 	bool Render(float);
 	HWND mHWnd;
