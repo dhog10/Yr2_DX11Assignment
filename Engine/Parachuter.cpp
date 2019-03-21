@@ -13,5 +13,6 @@ Parachuter::~Parachuter()
 
 void Parachuter::DoClick()
 {
+	pWorld->mScore++;
 	Destroy();
 }

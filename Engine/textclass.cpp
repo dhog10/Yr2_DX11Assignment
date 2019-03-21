@@ -3,12 +3,20 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "textclass.h"
 
+#include "FW1Library/Source/CFW1Factory.h"
+#include "FW1Library/Source/CFW1FontWrapper.h"
+#include "FW1Library/Source/FW1FontWrapper.h"
+
+#pragma comment(lib, "FW1FontWrapper.lib")
 
 TextClass::TextClass()
 {
 	m_Font = 0;
 	m_FontShader = 0;
 	m_sentence1 = 0;
+
+	m_pFW1Factory = 0;
+	m_pFontWrapper = 0;
 }
 
 
@@ -23,7 +31,7 @@ TextClass::~TextClass()
 
 
 bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, 
-	XMMATRIX baseViewMatrix)
+						   const XMMATRIX &baseViewMatrix)
 {
 	bool result;
 
@@ -73,9 +81,25 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence1, "Intersection: No", 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
+	result = UpdateSentence(m_sentence1, "Intersection: Nsd", 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
 	if(!result)
 	{
+		return false;
+	}
+
+	//Initialise the FW1Factory.
+	result = FW1CreateFactory(FW1_VERSION, &m_pFW1Factory);
+	if (FAILED(result))
+	{
+		MessageBox(hwnd, L"Could not Create FW1 Factory.", L"Error", MB_OK);
+		return false;
+	}
+
+	//Create a font wrapper for the ARIAL font.
+	result = m_pFW1Factory->CreateFontWrapper(device, (LPCWSTR)("ARIAL"), &m_pFontWrapper);
+	if (FAILED(result))
+	{
+		MessageBox(hwnd, L"Could not initialize font wrapper", L"Error", MB_OK);
 		return false;
 	}
 
@@ -104,17 +128,31 @@ void TextClass::Shutdown()
 		m_Font = 0;
 	}
 
+	if (m_pFontWrapper)
+	{
+		delete m_pFontWrapper;
+		m_pFontWrapper = 0;
+	}
+
+	if (m_pFW1Factory)
+	{
+		delete m_pFW1Factory;
+		m_pFW1Factory = 0;
+	}
+
+	
+
 	return;
 }
 
 
-bool TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX orthoMatrix)
+bool TextClass::Render(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &orthoMatrix)
 {
 	bool result;
 
 
 	// Draw the first sentence.
-	result = RenderSentence(deviceContext, m_sentence1, worldMatrix, viewMatrix, orthoMatrix);
+	result = RenderSentence(deviceContext, m_sentence1, worldMatrix, orthoMatrix);
 	if(!result)
 	{
 		return false;
@@ -291,6 +329,15 @@ bool TextClass::UpdateSentence(SentenceType* sentence, char* text, int positionX
 	delete [] vertices;
 	vertices = 0;
 
+	//Conver the given Char* to a WCHAR for display.
+	size_t newsize = strlen(text) + 1;
+	wchar_t * wcstring = new wchar_t[newsize];
+	size_t convertedChars = 0;
+	mbstowcs_s(&convertedChars, wcstring, newsize, text, _TRUNCATE);
+
+	//Set the sentence object in our sentence struct.
+	sentence->sentence = wcstring;
+
 	return true;
 }
 
@@ -322,12 +369,12 @@ void TextClass::ReleaseSentence(SentenceType** sentence)
 }
 
 
-bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType* sentence, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX orthoMatrix)
+bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType* sentence, const XMMATRIX &worldMatrix,
+	const XMMATRIX &orthoMatrix)
 {
 	unsigned int stride, offset;
 	XMFLOAT4 pixelColor;
-	bool result;
+	bool result = true;
 
 
 	// Set vertex buffer stride and offset.
@@ -347,21 +394,28 @@ bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType*
 	pixelColor = XMFLOAT4(sentence->red, sentence->green, sentence->blue, 1.0f);
 
 	// Render the text using the font shader.
-	result = m_FontShader->Render(deviceContext, sentence->indexCount, worldMatrix, viewMatrix, orthoMatrix, m_Font->GetTexture(),
-								  pixelColor);
-	if(!result)
-	{
-		false;
-	}
+	//result = m_FontShader->Render(deviceContext, sentence->indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, m_Font->GetTexture(), 
+	//							  pixelColor);
+	//if(!result)
+	//{
+	//	false;
+	//}
+
+	//Color = 0xAABBGGRR
+	UINT32 color = 0xFF0000FF;
+
+	//RESTORESTATE flag = draw what was on the screen before the text was rendered as well
+	m_pFontWrapper->DrawString(deviceContext, sentence->sentence, 10.0f, 10.0f, 10.0f, color,
+		FW1_TOP | FW1_LEFT | FW1_RESTORESTATE);
 
 	return true;
 }
 
-bool TextClass::SetText(const char* text, ID3D11DeviceContext* deviceContext) {
-	char message[11];
+bool TextClass::SetText(const char* message, ID3D11DeviceContext* deviceContext) {
+	char intersectionString[128];
 
-	strcpy_s(message, "0123456789");
-	return UpdateSentence(m_sentence1, message, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
+	strcpy_s(intersectionString, message);
+	return UpdateSentence(m_sentence1, intersectionString, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
 }
 
 bool TextClass::SetIntersection(bool intersection, ID3D11DeviceContext* deviceContext)
@@ -372,12 +426,12 @@ bool TextClass::SetIntersection(bool intersection, ID3D11DeviceContext* deviceCo
 
 	if(intersection)
 	{
-		strcpy_s(intersectionString, "Intersection: Yes");
+		strcpy_s(intersectionString, "Intersection: Y");
 		result = UpdateSentence(m_sentence1, intersectionString, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
 	}
 	else
 	{
-		strcpy_s(intersectionString, "Intersection: No");
+		strcpy_s(intersectionString, "Intersection: N");
 		result = UpdateSentence(m_sentence1, intersectionString, 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
 	}
 

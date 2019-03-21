@@ -24,6 +24,22 @@
     <ClInclude Include="fogshaderclass.h" />
     <ClInclude Include="fontclass.h" />
     <ClInclude Include="fontshaderclass.h" />
+    <ClInclude Include="FW1Library\Source\CFW1ColorRGBA.h" />
+    <ClInclude Include="FW1Library\Source\CFW1DWriteRenderTarget.h" />
+    <ClInclude Include="FW1Library\Source\CFW1Factory.h" />
+    <ClInclude Include="FW1Library\Source\CFW1FontWrapper.h" />
+    <ClInclude Include="FW1Library\Source\CFW1GlyphAtlas.h" />
+    <ClInclude Include="FW1Library\Source\CFW1GlyphProvider.h" />
+    <ClInclude Include="FW1Library\Source\CFW1GlyphRenderStates.h" />
+    <ClInclude Include="FW1Library\Source\CFW1GlyphSheet.h" />
+    <ClInclude Include="FW1Library\Source\CFW1GlyphVertexDrawer.h" />
+    <ClInclude Include="FW1Library\Source\CFW1Object.h" />
+    <ClInclude Include="FW1Library\Source\CFW1StateSaver.h" />
+    <ClInclude Include="FW1Library\Source\CFW1TextGeometry.h" />
+    <ClInclude Include="FW1Library\Source\CFW1TextRenderer.h" />
+    <ClInclude Include="FW1Library\Source\FW1CompileSettings.h" />
+    <ClInclude Include="FW1Library\Source\FW1FontWrapper.h" />
+    <ClInclude Include="FW1Library\Source\FW1Precompiled.h" />
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
@@ -54,6 +70,31 @@
     <ClCompile Include="fogshaderclass.cpp" />
     <ClCompile Include="fontclass.cpp" />
     <ClCompile Include="fontshaderclass.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1ColorRGBA.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1ColorRGBAInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1DWriteRenderTarget.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1DWriteRenderTargetInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1Factory.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1FactoryInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1FontWrapper.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1FontWrapperInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphAtlas.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphAtlasInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphProvider.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphProviderInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphRenderStates.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphRenderStatesInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphSheet.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphSheetInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphVertexDrawer.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1GlyphVertexDrawerInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1StateSaver.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1TextGeometry.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1TextGeometryInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1TextRenderer.cpp" />
+    <ClCompile Include="FW1Library\Source\CFW1TextRendererInterface.cpp" />
+    <ClCompile Include="FW1Library\Source\FW1FontWrapper.cpp" />
+    <ClCompile Include="FW1Library\Source\FW1Precompiled.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
@@ -84,6 +125,9 @@
     <None Include="skyplane.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="FW1Library\Source\FW1FontWrapper.lib" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B582C848-8474-42F1-91EE-C5B948FE3486}</ProjectGuid>

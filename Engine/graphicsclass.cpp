@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstdint>
 #include <conio.h>
+#include <sstream>
 
 GraphicsClass::GraphicsClass()
 {
@@ -590,9 +591,16 @@ bool GraphicsClass::Render(float rotation)
 	// Turn on alpha blending.
 	m_D3D->TurnOnAlphaBlending();
 
-	//m_Text->SetText("Score: 0", m_D3D->GetDeviceContext());
-	m_Text->SetIntersection(true, m_D3D->GetDeviceContext());
-	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, projectionMatrix, orthoMatrix);
+	std::string message = ;
+	int strLen = message.length();
+	char char_array[128];
+
+	// copying the contents of the 
+	// string to char array 
+	strcpy(char_array, message.c_str());
+
+	m_Text->SetText(char_array, m_D3D->GetDeviceContext());
+	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);         
 	if (!result)
 	{
 		return false;

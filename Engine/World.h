@@ -22,6 +22,7 @@ public:
 	~World();
 
 	void Think();
+	int mScore = 0;
 
 	std::map<const char*, BumpModelClass*> ModelCache;
 

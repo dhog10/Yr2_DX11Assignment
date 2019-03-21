@@ -31,6 +31,9 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{4ae346a9-bbce-4b24-879f-6ade3722193a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FW1">
+      <UniqueIdentifier>{85483570-2bd5-47a3-b780-2c210057167e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -116,6 +119,54 @@
     </ClInclude>
     <ClInclude Include="Parachuter.h">
       <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1ColorRGBA.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1DWriteRenderTarget.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1Factory.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1FontWrapper.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1GlyphAtlas.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1GlyphProvider.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1GlyphRenderStates.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1GlyphSheet.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1GlyphVertexDrawer.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1Object.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1StateSaver.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1TextGeometry.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\CFW1TextRenderer.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\FW1CompileSettings.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\FW1FontWrapper.h">
+      <Filter>FW1</Filter>
+    </ClInclude>
+    <ClInclude Include="FW1Library\Source\FW1Precompiled.h">
+      <Filter>FW1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +257,81 @@
     <ClCompile Include="Parachuter.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1ColorRGBA.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1ColorRGBAInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1DWriteRenderTarget.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1DWriteRenderTargetInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1Factory.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1FactoryInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1FontWrapper.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1FontWrapperInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphAtlas.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphAtlasInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphProvider.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphProviderInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphRenderStates.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphRenderStatesInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphSheet.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphSheetInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphVertexDrawer.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1GlyphVertexDrawerInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1StateSaver.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1TextGeometry.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1TextGeometryInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1TextRenderer.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\CFW1TextRendererInterface.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\FW1FontWrapper.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="FW1Library\Source\FW1Precompiled.cpp">
+      <Filter>FW1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bumpmap.ps">
@@ -244,5 +370,10 @@
     <None Include="font.vs">
       <Filter>Shader Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="FW1Library\Source\FW1FontWrapper.lib">
+      <Filter>FW1</Filter>
+    </Library>
   </ItemGroup>
 </Project>
