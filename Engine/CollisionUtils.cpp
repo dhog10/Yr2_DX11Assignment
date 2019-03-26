@@ -59,17 +59,6 @@ bool CollisionUtils::TestIntersection(Collision::CollisionDetectionType detectio
 	// Now perform the ray-sphere intersection test.
 	intersect = RaySphereIntersect(rayOriginFloat, direction, circleSize);
 
-	if (intersect == true)
-	{
-		// If it does intersect then set the intersection to "yes" in the text string that is displayed to the screen.
-		// result = m_Text->SetIntersection(true, pGraphicsClass->m_D3D->GetDeviceContext());
-	}
-	else
-	{
-		// If not then set the intersection to "No".
-		// result = m_Text->SetIntersection(false, pGraphicsClass->m_D3D->GetDeviceContext());
-	}
-
 	return intersect;
 }
 

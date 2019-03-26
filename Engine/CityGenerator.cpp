@@ -97,7 +97,7 @@ CityGenerator::CityGenerator() {
 		3.0f,
 		90.f);
 
-	BuildingCollisionsEnabled = true;
+	BuildingCollisionsEnabled = false;
 	LampCollisionsEnabled = false;
 	VehicleCollisionsEnabled = false;
 	RoadCollisionsEnabled = false;
