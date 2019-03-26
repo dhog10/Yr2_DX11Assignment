@@ -441,8 +441,21 @@ void CityGenerator::Think(World* pWorld) {
 			L"../Engine/data/white.dds",
 			L"../Engine/data/white.dds");
 		parachuter->renderShader = RenderShader::SHADED_NO_BUMP;
-		parachuter->pVelocity = new XMFLOAT3(0, -1, 0);
+		parachuter->pVelocity = new XMFLOAT3(0, -15, 0);
 		parachuter->EnableCollisions(true);
+
+		int parachuteX = rand() % (int)RoadSegmentSize * RoadLength * NumRoads;
+		int parachuteY = 500 + (rand() % 120);
+		int parachuteZ = rand() % (int)RoadSegmentSize * RoadLength * NumRoads;
+
+		parachuter->pPosition = new XMFLOAT3(parachuteX, parachuteY, parachuteZ);
+		
+		int yaw = rand() & 360;
+		parachuter->SetAngle(0.f, (float)yaw, 0.f);
+
+		float yawVel = (rand() & 2);
+		yawVel *= 0.1f;
+		parachuter->pAngularVelocity = new XMFLOAT3(0.f, (float)yawVel, 0.f);
 	}
 
 	if (time < LastCarSpawn + 1000) { return; }

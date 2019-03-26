@@ -591,7 +591,7 @@ bool GraphicsClass::Render(float rotation)
 	// Turn on alpha blending.
 	m_D3D->TurnOnAlphaBlending();
 
-	std::string message = ;
+	std::string message = "Score: " + std::to_string(pWorld->mScore) + "\nHealth: " + std::to_string(pWorld->mHealth);
 	int strLen = message.length();
 	char char_array[128];
 

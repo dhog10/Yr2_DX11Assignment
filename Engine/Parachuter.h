@@ -8,6 +8,7 @@ public:
 	Parachuter(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2);
 	~Parachuter();
 
+	virtual void OnRender(float deltaTime);
 	virtual void DoClick();
 };
 

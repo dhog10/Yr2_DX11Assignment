@@ -23,6 +23,7 @@ public:
 
 	void Think();
 	int mScore = 0;
+	int mHealth = 10;
 
 	std::map<const char*, BumpModelClass*> ModelCache;
 
