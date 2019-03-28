@@ -168,6 +168,15 @@
     <ClInclude Include="FW1Library\Source\FW1Precompiled.h">
       <Filter>FW1</Filter>
     </ClInclude>
+    <ClInclude Include="Missile.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Ship.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="MathUtil.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bumpmapshaderclass.cpp">
@@ -331,6 +340,15 @@
     </ClCompile>
     <ClCompile Include="FW1Library\Source\FW1Precompiled.cpp">
       <Filter>FW1</Filter>
+    </ClCompile>
+    <ClCompile Include="Missile.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Ship.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="MathUtil.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "Parachuter.h"
 #include "StellarBody.h"
 #include "BaseObject.h"
+#include "Ship.h"
 
 /**
 	NIEE2211 - Computer Games Studio 2
@@ -17,6 +18,7 @@
 
 World::World()
 {
+	mCameraMovementEnabled = true;
 	ModelCache = std::map<const char*, BumpModelClass*>();
 
 	CurrentID = 0;
@@ -75,6 +77,15 @@ World::World()
 	pGenerator->CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
 
 	pGenerator->GenerateWorld(this);
+
+
+	// Spawn the player ship
+	Ship* pPlayerShip = CreateObject<Ship>("Player Ship",
+		"",
+		L"../Engine/data/white.dds",
+		L"../Engine/data/white.dds");
+	pPlayerShip->pPosition = new XMFLOAT3(0.f, 25.f, 0.f);
+	pPlayerShip->SetEnemy(false);
 
 	this->pCityGenerator = pGenerator;
 }

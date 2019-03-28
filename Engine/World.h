@@ -11,6 +11,7 @@ Date: 13/12/2018
 #include "CityGenerator.h"
 
 class BaseObject;
+class GraphicsClass;
 
 class World
 {
@@ -45,12 +46,14 @@ public:
 		return pObject;
 	}
 
+	bool mCameraMovementEnabled;
 	XMFLOAT3* pCameraPosition;
 	XMFLOAT3* pCameraAngle;
 	XMFLOAT3* pLightingOrigin;
 	XMFLOAT3* pLightingAngle;
 	WCHAR* pSkySphereMaterial;
 
+	GraphicsClass* pGraphicsClass;
 	CityGenerator* pCityGenerator;
 
 	void DestroyObject(BaseObject*);

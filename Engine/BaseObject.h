@@ -26,10 +26,6 @@ class BaseObject
 private:
 	const char* Name;
 
-	const char* pModelPath;
-	WCHAR* pMaterialPath;
-	WCHAR* pMaterialPath2;
-
 	D3DClass* pD3DClass;
 	BaseObject* pParent;
 
@@ -38,10 +34,12 @@ private:
 	// Collision
 	bool CollisionEnabled;
 	BoundingBox* pBoundingBox = 0;
-
 protected:
-	bool mDestroyed;
+	const char* pModelPath;
+	WCHAR* pMaterialPath;
+	WCHAR* pMaterialPath2;
 
+	bool mDestroyed;
 public:
 	BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2);
 	~BaseObject();
@@ -86,7 +84,6 @@ public:
 	bool bDontTransformParentRotation;
 
 	BumpModelClass* pModelClass;
-
 	class World* pWorld;
 
 	bool operator==(BaseObject other);

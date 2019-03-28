@@ -41,6 +41,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 	bool result;
 
 	mHWnd = hwnd;
+	pWorld->pGraphicsClass = this;
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -324,6 +325,38 @@ bool GraphicsClass::Frame()
 }
 
 
+void GraphicsClass::RenderText(std::string text)
+{
+	m_Camera->Render();
+
+	XMMATRIX projectionMatrix, worldMatrix, orthoMatrix;
+
+	// Get the view, projection, and world matrices from the camera and D3D objects.
+	// m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetOrthoMatrix(orthoMatrix);
+
+	// Turn off the Z buffer to begin all 2D rendering.
+	m_D3D->TurnZBufferOff();
+
+	// Turn on alpha blending.
+	m_D3D->TurnOnAlphaBlending();
+
+	int strLen = text.length();
+	char char_array[1024];
+
+	// copying the contents of the 
+	// string to char array 
+	strcpy(char_array, text.c_str());
+
+	m_Text->SetText(char_array, m_D3D->GetDeviceContext());
+	m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
+
+	m_D3D->TurnZBufferOn();
+	m_D3D->TurnOffAlphaBlending();
+}
+
 bool GraphicsClass::Render(float rotation)
 {
 	pWorld->Think();
@@ -429,16 +462,18 @@ bool GraphicsClass::Render(float rotation)
 
 	float camSpeed = 100.f;
 
-	// Modify the camera's position
-	pWorld->pCameraPosition->x += cameraRightFloat.x * vel * DeltaTime * camSpeed;
-	pWorld->pCameraPosition->y += cameraRightFloat.y * vel * DeltaTime * camSpeed;
-	pWorld->pCameraPosition->z += cameraRightFloat.z * vel * DeltaTime * camSpeed;
+	if (pWorld->mCameraMovementEnabled) {
+		// Modify the camera's position
+		pWorld->pCameraPosition->x += cameraRightFloat.x * vel * DeltaTime * camSpeed;
+		pWorld->pCameraPosition->y += cameraRightFloat.y * vel * DeltaTime * camSpeed;
+		pWorld->pCameraPosition->z += cameraRightFloat.z * vel * DeltaTime * camSpeed;
 
-	vel = pCameraVelocity->y;
+		vel = pCameraVelocity->y;
 
-	pWorld->pCameraPosition->x += cameraForwardFloat.x * vel * DeltaTime * camSpeed;
-	pWorld->pCameraPosition->y += cameraForwardFloat.y * vel * DeltaTime * camSpeed;
-	pWorld->pCameraPosition->z += cameraForwardFloat.z * vel * DeltaTime * camSpeed;
+		pWorld->pCameraPosition->x += cameraForwardFloat.x * vel * DeltaTime * camSpeed;
+		pWorld->pCameraPosition->y += cameraForwardFloat.y * vel * DeltaTime * camSpeed;
+		pWorld->pCameraPosition->z += cameraForwardFloat.z * vel * DeltaTime * camSpeed;
+	}
 
 	m_Camera->SetPosition(pWorld->pCameraPosition->x, pWorld->pCameraPosition->y, pWorld->pCameraPosition->z);
 

@@ -170,15 +170,17 @@ BaseObject* BaseObject::GetParent() {
 XMMATRIX TransformRotation(XMMATRIX* pMatrix, XMFLOAT3* pAngle) {
 	XMMATRIX Matrix = *pMatrix;
 
-	if (pAngle->x != 0.f) {
-		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationX(pAngle->x));
+	if (pAngle->z != 0.f) {
+		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationZ(pAngle->z));
 	}
 	if (pAngle->y != 0.f) {
 		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationY(pAngle->y));
 	}
-	if (pAngle->z != 0.f) {
-		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationZ(pAngle->z));
+	if (pAngle->x != 0.f) {
+		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationX(pAngle->x));
 	}
+	
+	
 
 	return Matrix;
 }

@@ -53,6 +53,8 @@ public:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	TextClass* m_Text;
+
+	void RenderText(std::string text);
 private:
 	bool Render(float);
 	HWND mHWnd;

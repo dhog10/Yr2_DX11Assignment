@@ -44,9 +44,12 @@
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightshaderclass.h" />
+    <ClInclude Include="MathUtil.h" />
+    <ClInclude Include="Missile.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="Parachuter.h" />
     <ClInclude Include="shadermanagerclass.h" />
+    <ClInclude Include="Ship.h" />
     <ClInclude Include="skyplaneclass.h" />
     <ClInclude Include="skyplaneshaderclass.h" />
     <ClInclude Include="StellarBody.h" />
@@ -100,9 +103,12 @@
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="lightshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MathUtil.cpp" />
+    <ClCompile Include="Missile.cpp" />
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="Parachuter.cpp" />
     <ClCompile Include="shadermanagerclass.cpp" />
+    <ClCompile Include="Ship.cpp" />
     <ClCompile Include="skyplaneclass.cpp" />
     <ClCompile Include="skyplaneshaderclass.cpp" />
     <ClCompile Include="StellarBody.cpp" />

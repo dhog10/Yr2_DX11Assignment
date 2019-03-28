@@ -80,6 +80,86 @@ CityGenerator::CityGenerator() {
 		-6.f,
 		20.f);
 
+	/*AddBuilding("../Engine/data/city/buildings/scifi/b1.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b2.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b3.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b4.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b5.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b6.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b7.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b8.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b9.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);
+
+	AddBuilding("../Engine/data/city/buildings/scifi/b10.obj",
+		L"../Engine/data/city/buildings/scifi/glass.dds",
+		40.f,
+		40.f,
+		0.3f,
+		0.f,
+		20.f);*/
+
 	// Initialize car types
 
 	AddCar("../Engine/data/cars/police_car.obj", // Model
