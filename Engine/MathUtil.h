@@ -13,5 +13,6 @@ public:
 	static XMFLOAT3 AngleDirection(XMFLOAT3);
 	static XMFLOAT3 DirectionAngle(XMFLOAT3);
 	static XMFLOAT3 InvertFloat3(XMFLOAT3);
+	static XMFLOAT3 Cross(XMFLOAT3, XMFLOAT3);
 };
 

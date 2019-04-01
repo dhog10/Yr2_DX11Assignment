@@ -4,6 +4,8 @@
 #include "StellarBody.h"
 #include "BaseObject.h"
 #include "Ship.h"
+#include "ShipSelect.h"
+#include "Missile.h"
 
 /**
 	NIEE2211 - Computer Games Studio 2
@@ -15,6 +17,66 @@
 
 // The world class is responsible for creating and storing game objects
 // This class is also used to perform think logic for the city generator
+
+void World::StartShipSelect()
+{
+	SpawnShipSelects();
+	
+}
+
+void World::StartPlay()
+{
+	// Spawn the player ship
+	Ship* pPlayerShip = CreateObject<Ship>("Player Ship",
+		"",
+		L"../Engine/data/white.dds",
+		L"../Engine/data/white.dds");
+	pPlayerShip->pPosition = new XMFLOAT3(0.f, 140.f, 0.f);
+	pPlayerShip->SetAngle(0, -90, 0);
+	pPlayerShip->SetEnemy(false);
+	pPlayerShip->mPlayerShip = true;
+	if (mPlayerShipType) {
+		pPlayerShip->SetShipType(mPlayerShipType);
+	}
+
+	this->pPlayerShip = pPlayerShip;
+}
+
+void World::SpawnShipSelects()
+{
+	float shipGap = 45.f;
+	float selectHeight = 150.f;
+
+	// Spawn ship selects for each ship type
+	for (int i = ShipType::DEFAULT; i != ShipType::E; i++)
+	{
+		ShipType shipType = static_cast<ShipType>(i);
+
+		ShipSelect* pShipSelect = CreateObject<ShipSelect>("Ship Select",
+			"",
+			L"../Engine/data/white.dds",
+			L"../Engine/data/white.dds");
+		pShipSelect->SetShipType(shipType);
+		pShipSelect->SetEnemy(false);
+		pShipSelect->pPosition = new XMFLOAT3(i * shipGap, selectHeight, 0.f);
+		pShipSelect->SetAngle(0, 90, 0);
+		pShipSelect->mMinSpeed = 0.f;
+		pShipSelect->mSpeed = 0.f;
+
+		mShipSelects.push_back(pShipSelect);
+	}
+
+	pCameraPosition = new XMFLOAT3(ShipType::E * 0.5f * shipGap, selectHeight + 5.f, -70.f);
+}
+
+void World::RemoveShipSelects()
+{
+	for (int i = 0; i < mShipSelects.size(); i++) {
+		mShipSelects.at(i)->Destroy();
+	}
+
+	mShipSelects.clear();
+}
 
 World::World()
 {
@@ -78,16 +140,10 @@ World::World()
 
 	pGenerator->GenerateWorld(this);
 
-
-	// Spawn the player ship
-	Ship* pPlayerShip = CreateObject<Ship>("Player Ship",
-		"",
-		L"../Engine/data/white.dds",
-		L"../Engine/data/white.dds");
-	pPlayerShip->pPosition = new XMFLOAT3(0.f, 25.f, 0.f);
-	pPlayerShip->SetEnemy(false);
-
 	this->pCityGenerator = pGenerator;
+
+	mShipSelects = std::vector<ShipSelect*>();
+	SetGameState(GameState::SHIP_SELECT);
 }
 
 
@@ -130,6 +186,36 @@ void World::DestroyObject(BaseObject* pObject)
 	}
 
 	pObject->OnDestroy();
+}
+
+void World::SetGameState(GameState state)
+{
+	mGameState = state;
+
+	switch (state) {
+	case GameState::SHIP_SELECT:
+		StartShipSelect();
+		break;
+	case GameState::PLAY:
+		RemoveShipSelects();
+		StartPlay();
+		break;
+	}
+}
+
+GameState World::GetGameState()
+{
+	return mGameState;
+}
+
+Ship* World::GetPlayerShip()
+{
+	if (pPlayerShip != NULL) {
+		return pPlayerShip;
+	}
+	else {
+		return NULL;
+	}
 }
 
 void World::Think() {

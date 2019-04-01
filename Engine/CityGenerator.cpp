@@ -513,7 +513,7 @@ void CityGenerator::Think(World* pWorld) {
 
 	float time = timeGetTime();
 
-	if (time > lastParachuteSpawn + 1000) {
+	if (pWorld->GetGameState() == GameState::PLAY && time > lastParachuteSpawn + 1000) {
 		lastParachuteSpawn = time;
 
 		Parachuter* parachuter = pWorld->CreateObject<Parachuter>("Car",

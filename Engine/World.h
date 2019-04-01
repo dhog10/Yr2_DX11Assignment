@@ -12,12 +12,28 @@ Date: 13/12/2018
 
 class BaseObject;
 class GraphicsClass;
+class ShipSelect;
+class Ship;
+
+enum GameState {
+	SHIP_SELECT,
+	PLAY,
+};
 
 class World
 {
 private:
 	std::vector<BaseObject*>* Objects;
 	int CurrentID;
+	GameState mGameState;
+	void StartShipSelect();
+	void StartPlay();
+	void SpawnShipSelects();
+	void RemoveShipSelects();
+
+	std::vector<ShipSelect*> mShipSelects;
+
+	Ship* pPlayerShip;
 public:
 	World();
 	~World();
@@ -57,5 +73,9 @@ public:
 	CityGenerator* pCityGenerator;
 
 	void DestroyObject(BaseObject*);
+	void SetGameState(GameState state);
+	GameState GetGameState();
+	enum ShipType mPlayerShipType;
+	Ship* GetPlayerShip();
 };
 

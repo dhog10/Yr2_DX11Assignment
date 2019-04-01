@@ -37,7 +37,8 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	Initialized = false;
 
 	mCollisionRadius = 10000.0f;
-	CollisionEnabled = false;
+	mCollisionEnabled = false;
+	mHoveringEnabled = false;
 }
 
 // Initialize the object, set stored materials and initialize the model
@@ -84,6 +85,10 @@ int BaseObject::GetID() {
 }
 
 // this function could be overriden and used to perform custom render operations on this object
+
+void BaseObject::OnInput(InputFrame inputFrame, float DeltaTime)
+{
+}
 
 void BaseObject::OnRender(float DeltaTime)
 {
@@ -250,7 +255,7 @@ XMFLOAT3 BaseObject::GetAngle() {
 // Collision
 
 void BaseObject::EnableCollisions(bool enabled) {
-	CollisionEnabled = enabled;
+	mCollisionEnabled = enabled;
 
 	if (enabled) {
 		ComputeBoundingBox();
@@ -265,8 +270,18 @@ void BaseObject::EnableCollisions(bool enabled) {
 	}
 }
 
+void BaseObject::EnableHovering(bool enabled)
+{
+	mHoveringEnabled = enabled;
+}
+
 bool BaseObject::GetCollisionsEnabled() {
-	return CollisionEnabled;
+	return mCollisionEnabled;
+}
+
+bool BaseObject::GetHoveringEnabled()
+{
+	return mHoveringEnabled;
 }
 
 void BaseObject::ComputeBoundingBox() {
@@ -296,4 +311,31 @@ void BaseObject::ComputeBoundingBox() {
 
 void BaseObject::DoClick() {
 
+}
+
+void BaseObject::DoHoverStart()
+{
+}
+
+void BaseObject::DoHoverEnd()
+{
+}
+
+bool BaseObject::IsHovered()
+{
+	return mHovered;
+}
+
+void BaseObject::SetHovered(bool hovered)
+{
+	if (hovered != mHovered) {
+		if (hovered) {
+			DoHoverStart();
+		}
+		else {
+			DoHoverEnd();
+		}
+	}
+	
+	mHovered = hovered;
 }

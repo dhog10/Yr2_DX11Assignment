@@ -47,3 +47,10 @@ XMFLOAT3 MathUtil::InvertFloat3(XMFLOAT3 value)
 {
 	return XMFLOAT3(-value.x, -value.y, -value.z);
 }
+
+XMFLOAT3 MathUtil::Cross(XMFLOAT3 a, XMFLOAT3 b)
+{
+	return XMFLOAT3(a.y * b.z - a.z * b.y,
+		a.z * b.x - a.x * b.z,
+		a.x * b.y - a.y * b.x);
+}

@@ -74,7 +74,7 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Initialize the first sentence.
-	result = InitializeSentence(&m_sentence1, 128, device);
+	result = InitializeSentence(&m_sentence1, 512, device);
 	if(!result)
 	{
 		return false;
@@ -412,7 +412,7 @@ bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType*
 }
 
 bool TextClass::SetText(const char* message, ID3D11DeviceContext* deviceContext) {
-	char intersectionString[128];
+	char intersectionString[512];
 
 	strcpy_s(intersectionString, message);
 	return UpdateSentence(m_sentence1, intersectionString, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
@@ -420,7 +420,7 @@ bool TextClass::SetText(const char* message, ID3D11DeviceContext* deviceContext)
 
 bool TextClass::SetIntersection(bool intersection, ID3D11DeviceContext* deviceContext)
 {
-	char intersectionString[128];
+	char intersectionString[512];
 	bool result;
 
 

@@ -21,6 +21,12 @@ Date: 13/12/2018
 
 enum RenderShader { SHADED, UNLIT, SHADED_NO_BUMP, SHADED_FOG };
 
+// The input frame struct is used to pass input into the object
+struct InputFrame {
+	float horizontal;
+	float vertical;
+};
+
 class BaseObject
 {
 private:
@@ -32,7 +38,9 @@ private:
 	bool Initialized;
 
 	// Collision
-	bool CollisionEnabled;
+	bool mCollisionEnabled;
+	bool mHoveringEnabled;
+	bool mHovered;
 	BoundingBox* pBoundingBox = 0;
 protected:
 	const char* pModelPath;
@@ -74,6 +82,7 @@ public:
 	void SetAngle(float, float, float);
 	XMFLOAT3 GetAngle();
 
+	virtual void OnInput(InputFrame inputFrame, float DeltaTime);
 	virtual void OnRender(float DeltaTime);
 	void OnCreate();
 	void OnDestroy();
@@ -91,9 +100,15 @@ public:
 	// Collision
 	float mCollisionRadius;
 	void EnableCollisions(bool enabled);
+	void EnableHovering(bool enabled);
 	bool GetCollisionsEnabled();
+	bool GetHoveringEnabled();
 	void ComputeBoundingBox();
 	virtual void DoClick();
+	virtual void DoHoverStart();
+	virtual void DoHoverEnd();
+	bool IsHovered();
+	void SetHovered(bool);
 
 	CollisionUtils* pCollisionUtil;
 };

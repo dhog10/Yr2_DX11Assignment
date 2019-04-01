@@ -408,18 +408,26 @@ bool GraphicsClass::Render(float rotation)
 
 	// Here i receive keyboard input and transform the camera's position based on the WASD input
 
+	InputFrame inputFrame = InputFrame();
+	inputFrame.vertical = 0.f;
+	inputFrame.horizontal = 0.f;
+
 	// Keyboard input
 	if (GetKeyState('W') & 0x8000) { // GetAsyncKeyState(VK_LEFT)
 		pCameraVelocity->y += 1.f;
+		inputFrame.vertical = 1.f;
 	}
 	if (GetKeyState('S') & 0x8000) {
 		pCameraVelocity->y -= 1.f;
+		inputFrame.vertical = -1.f;
 	}
 	if (GetKeyState('A') & 0x8000) {
 		pCameraVelocity->x -= 1.f;
+		inputFrame.horizontal = -1.f;
 	}
 	if (GetKeyState('D') & 0x8000) {
 		pCameraVelocity->x += 1.f;
+		inputFrame.horizontal = 1.f;
 	}
 
 	bool mouseClicked = false;
@@ -493,8 +501,6 @@ bool GraphicsClass::Render(float rotation)
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-
-
 	// World operations such as rendering and object think invoking
 	if (pWorld) {
 		std::vector<BaseObject*> objects = *pWorld->GetObjects();
@@ -519,6 +525,7 @@ bool GraphicsClass::Render(float rotation)
 			objects[i]->pAngle->z += objects[i]->pAngularVelocity->z * DeltaTime;
 
 			objects[i]->OnRender(DeltaTime);
+			objects[i]->OnInput(inputFrame, DeltaTime);
 
 			// Reset worldMatrix to origin
 			m_D3D->GetWorldMatrix(worldMatrix);
@@ -585,6 +592,7 @@ bool GraphicsClass::Render(float rotation)
 				break;
 			}
 
+			// If mouse clicked and object collisions enabled, check if object was clicked
 			if (mouseClicked && pObject->GetCollisionsEnabled()) {
 				pObject->pCollisionUtil->pGraphicsClass = this;
 				pObject->pCollisionUtil->m_screenWidth = scrW;
@@ -597,6 +605,15 @@ bool GraphicsClass::Render(float rotation)
 				else {
 					//pObject->SetScale(0.001f);
 				}
+			}
+			
+			// If object hovering is enabled, check if object is hovered by mouse each frame
+			if (pObject->GetCollisionsEnabled() && pObject->GetHoveringEnabled()) {
+				pObject->pCollisionUtil->pGraphicsClass = this;
+				pObject->pCollisionUtil->m_screenWidth = scrW;
+				pObject->pCollisionUtil->m_screenHeight = scrH;
+
+				pObject->SetHovered(pObject->pCollisionUtil->TestIntersection(Collision::CollisionDetectionType::SPHERE, worldMatrix, viewMatrix, projectionMatrix, mouseX, mouseY, pObject->mCollisionRadius));
 			}
 		}
 
@@ -628,7 +645,7 @@ bool GraphicsClass::Render(float rotation)
 
 	std::string message = "Score: " + std::to_string(pWorld->mScore) + "\nHealth: " + std::to_string(pWorld->mHealth);
 	int strLen = message.length();
-	char char_array[128];
+	char char_array[512];
 
 	// copying the contents of the 
 	// string to char array 

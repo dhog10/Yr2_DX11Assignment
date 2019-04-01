@@ -10,5 +10,8 @@ public:
 
 	virtual void OnRender(float deltaTime);
 	virtual void DoClick();
+
+	float mMissileSpeed;
+	BaseObject* pTarget;
 };
 
