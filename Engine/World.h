@@ -14,6 +14,7 @@ class BaseObject;
 class GraphicsClass;
 class ShipSelect;
 class Ship;
+class ParticleSystem;
 
 enum GameState {
 	SHIP_SELECT,
@@ -37,6 +38,8 @@ private:
 public:
 	World();
 	~World();
+
+	void PostInitialized();
 
 	void Think();
 	int mScore = 0;
@@ -71,11 +74,14 @@ public:
 
 	GraphicsClass* pGraphicsClass;
 	CityGenerator* pCityGenerator;
+	ParticleSystem* pParticleSystem;
 
 	void DestroyObject(BaseObject*);
 	void SetGameState(GameState state);
 	GameState GetGameState();
 	enum ShipType mPlayerShipType;
 	Ship* GetPlayerShip();
+
+	void CacheModel(char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2);
 };
 

@@ -184,8 +184,6 @@ XMMATRIX TransformRotation(XMMATRIX* pMatrix, XMFLOAT3* pAngle) {
 	if (pAngle->x != 0.f) {
 		Matrix = XMMatrixMultiply(Matrix, XMMatrixRotationX(pAngle->x));
 	}
-	
-	
 
 	return Matrix;
 }
@@ -231,9 +229,15 @@ XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject, bool don
 
 // This returns the world matrix of the object, taking into account its parent (if it has one)
 XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin) {
+	
 	origin = XMMatrixScaling(pScale->x, pScale->y, pScale->z);
+	origin = CalculateWorldPosition(&origin, this, false);
 
-	return CalculateWorldPosition(&origin, this, false);
+	if (mUseOrientationMatrix) {
+		return mOrientationMatrix;
+	}
+
+	return origin;
 }
 
 void BaseObject::SetScale(float scale) {

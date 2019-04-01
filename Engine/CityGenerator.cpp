@@ -541,6 +541,8 @@ void CityGenerator::Think(World* pWorld) {
 	if (time < LastCarSpawn + 1000) { return; }
 	LastCarSpawn = time;
 
+	if (!mActive) { return; }
+
 	if (this->pCarTypes->size() < this->MaxCars) {
 		for (int x = 0; x < NumRoads; x++) {
 			for (int y = 0; y < NumRoads; y++) {

@@ -111,5 +111,8 @@ public:
 	void SetHovered(bool);
 
 	CollisionUtils* pCollisionUtil;
+
+	bool mUseOrientationMatrix = false;
+	XMMATRIX mOrientationMatrix;
 };
 

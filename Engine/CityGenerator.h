@@ -54,6 +54,7 @@ public:
 	CityGenerator();
 	~CityGenerator();
 
+	bool mActive = false;
 	void Think(World*);
 
 	std::vector<CityBuilding>* pBuildings;

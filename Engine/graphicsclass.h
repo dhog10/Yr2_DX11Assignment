@@ -54,15 +54,15 @@ public:
 	CameraClass* m_Camera;
 	TextClass* m_Text;
 
+	ShaderManagerClass* m_ShaderManager;
+	LightClass* m_Light;
 	void RenderText(std::string text);
 private:
 	bool Render(float);
 	HWND mHWnd;
 private:
 	
-	ShaderManagerClass* m_ShaderManager;
 	
-	LightClass* m_Light;
 	ModelClass* m_Model1;
 	ModelClass* m_Model2;
 	BumpModelClass* m_Model3;

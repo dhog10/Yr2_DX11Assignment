@@ -3,6 +3,7 @@
 #include "Missile.h"
 #include "World.h"
 #include "graphicsclass.h"
+#include "ParticleSystem.h"
 
 Ship::Ship(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2) : BaseObject::BaseObject(Name, ModelPath, MaterialPath, MaterialPath2)
 {
@@ -26,10 +27,11 @@ void Ship::FireMissile(BaseObject * pTarget)
 {
 	Missile* pMissile = pWorld->CreateObject<Missile>("Missile",
 		"",
-		L"",
-		L"");
+		L"../Engine/data/white.dds",
+		L"../Engine/data/white.dds");
 
 	pMissile->pTarget = pTarget;
+	pMissile->pPosition = new XMFLOAT3(pPosition->x, pPosition->y, pPosition->z);
 }
 
 void Ship::OnRender(float deltaTime)
@@ -62,7 +64,8 @@ void Ship::OnRender(float deltaTime)
 		std::string text = "\n\nCam Dir: " + std::to_string(cameraDirection.x) + " | " + std::to_string(cameraDirection.y) + " | " + std::to_string(cameraDirection.z)
 			+ "\nCam Ang: " + std::to_string(camAng.x) + " | " + std::to_string(camAng.y) + " | " + std::to_string(camAng.z)
 			+ "\nDirection: " + std::to_string(direction.x) + "|" + std::to_string(direction.y) + "|" + std::to_string(direction.z)
-			+ "\nSpeed: " + std::to_string(mSpeed);
+			+ "\nSpeed: " + std::to_string(mSpeed)
+			+ "\n Particles: " + std::to_string(pWorld->pParticleSystem->GetNumParticles());
 		pWorld->pGraphicsClass->RenderText(text);
 	}
 }

@@ -2,6 +2,7 @@
 // Filename: graphicsclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "graphicsclass.h"
+#include "ParticleSystem.h"
 #include <ctime>
 #include <chrono>
 #include <cstdint>
@@ -211,6 +212,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Wor
 	}
 
 	LastTime = timeGetTime();
+	pWorld->PostInitialized();
 
 	return true;
 }
@@ -624,6 +626,9 @@ bool GraphicsClass::Render(float rotation)
 				pWorld->DestroyObject(pObject);
 			}
 		}
+
+		m_D3D->GetWorldMatrix(worldMatrix);
+		pWorld->pParticleSystem->RenderParticles(DeltaTime, this, worldMatrix, viewMatrix, projectionMatrix);
 	}
 
 	/////////////// Render the text strings. ///////////////

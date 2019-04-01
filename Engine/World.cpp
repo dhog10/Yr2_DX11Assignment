@@ -6,7 +6,8 @@
 #include "Ship.h"
 #include "ShipSelect.h"
 #include "Missile.h"
-
+#include "graphicsclass.h"
+#include "ParticleSystem.h"
 /**
 	NIEE2211 - Computer Games Studio 2
 
@@ -130,14 +131,15 @@ World::World()
 	CityGenerator* pGenerator = new CityGenerator();
 	pGenerator->RoadSegmentSize = 36.f;
 	pGenerator->RoadSegmentScale = 0.01f;
-	pGenerator->RoadLength = 5;
-	pGenerator->NumRoads = 6;
+	pGenerator->RoadLength = 10;
+	pGenerator->NumRoads = 5;
 
 	pGenerator->StraightRoadModel = "../Engine/data/city/roads/road_2_lane_straight.obj";
 	pGenerator->StraightRoadMaterial = L"../Engine/data/city/roads/road_2_lane_straight.dds";
 	pGenerator->CrossRoadsModel = "../Engine/data/city/roads/road_2_lane_x.obj";
 	pGenerator->CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
 
+	pGenerator->mActive = true;
 	pGenerator->GenerateWorld(this);
 
 	this->pCityGenerator = pGenerator;
@@ -150,6 +152,15 @@ World::World()
 World::~World()
 {
 	delete Objects;
+}
+
+void World::PostInitialized()
+{
+	pParticleSystem = new ParticleSystem();
+	pParticleSystem->pD3D = pGraphicsClass->m_D3D;
+	pParticleSystem->Initialize();
+
+	CacheModel("../Engine/data/missile/missile.obj", L"../Engine/data/missile/missile.dds", L"../Engine/data/missile/missile.dds");
 }
 
 std::vector<BaseObject*>* World::GetObjects()
@@ -216,6 +227,13 @@ Ship* World::GetPlayerShip()
 	else {
 		return NULL;
 	}
+}
+
+void World::CacheModel(char * modelFilename, WCHAR * textureFilename1, WCHAR * textureFilename2)
+{
+	BumpModelClass* pModelClass = new BumpModelClass;
+	HRESULT result = pModelClass->Initialize(pGraphicsClass->m_D3D->GetDevice(), modelFilename, textureFilename1, textureFilename2);
+	ModelCache[modelFilename] = pModelClass;
 }
 
 void World::Think() {
