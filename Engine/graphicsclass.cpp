@@ -577,10 +577,12 @@ bool GraphicsClass::Render(float rotation)
 				pModelClass->Render(m_D3D->GetDeviceContext());
 				result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 					pModelClass->GetColorTexture(), relativePosition, m_Light->GetDiffuseColor(), ambientColor, m_Camera->GetPosition(), specularColor, specularPower);
+				break;
 			case RenderShader::SHADED_FOG:
 				pModelClass->Render(m_D3D->GetDeviceContext());
 				result = m_ShaderManager->RenderFogShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 					pModelClass->GetColorTexture(), relativePosition, m_Light->GetDiffuseColor(), ambientColor, m_Camera->GetPosition(), specularColor, specularPower);
+				break;
 			case RenderShader::SHADED:
 				pModelClass->Render(m_D3D->GetDeviceContext());
 				result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
@@ -592,6 +594,18 @@ bool GraphicsClass::Render(float rotation)
 				result = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pModelClass->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 					pModelClass->GetColorTexture());
 				break;
+			}
+
+			if (pObject->GetDrawOBB()) {
+				// m_D3D->TurnOnWireframe();
+				pObject->pOBBModel->Render(m_D3D->GetDeviceContext());
+				bool success = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pObject->pOBBModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+					pObject->pOBBModel->GetColorTexture());
+				// m_D3D->TurnOffWireframe();
+			}
+
+			if (pObject->GetDrawAABB()) {
+
 			}
 
 			// If mouse clicked and object collisions enabled, check if object was clicked

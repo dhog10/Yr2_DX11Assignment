@@ -13,6 +13,7 @@
 using namespace DirectX;
 
 #include <fstream>
+#include <vector>
 using namespace std;
 
 
@@ -33,6 +34,17 @@ struct TriFace {
 	FaceVertex v3;
 };
 
+struct ModelType
+{
+	float x, y, z;
+	float tu, tv;
+	float nx, ny, nz;
+	float tx, ty, tz;
+	float bx, by, bz;
+};
+
+struct VertexData;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: BumpModelClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,15 +58,6 @@ private:
 		XMFLOAT3 normal;
 		XMFLOAT3 tangent;
 		XMFLOAT3 binormal;
-	};
-
-	struct ModelType
-	{
-		float x, y, z;
-		float tu, tv;
-		float nx, ny, nz;
-		float tx, ty, tz;
-		float bx, by, bz;
 	};
 
 	struct TempVertexType
@@ -75,6 +78,7 @@ public:
 	~BumpModelClass();
 
 	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*);
+	bool InitializeFromVertexArray(ID3D11Device*, VertexData, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
@@ -83,12 +87,16 @@ public:
 
 	int GetIndexCount();
 	int GetVertexCount();
+	void SetIndexCount(int);
+	void SetVertexCount(int);
+	void InitializeModel();
 
 	ID3D11ShaderResourceView* GetColorTexture();
 	ID3D11ShaderResourceView* GetNormalMapTexture();
 
-private:
+	void CalculateModelVectors();
 	bool InitializeBuffers(ID3D11Device*);
+private:
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 
@@ -97,10 +105,10 @@ private:
 
 	bool LoadModel(char*);
 	bool LoadModelOBJ(char*);
+	bool LoadModelFromVertices(VertexData);
 	void LoadFaceToModel(int, XMFLOAT3, XMFLOAT2, XMFLOAT3);
 	void ReleaseModel();
 
-	void CalculateModelVectors();
 	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
 
 private:

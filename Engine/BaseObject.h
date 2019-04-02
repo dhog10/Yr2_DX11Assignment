@@ -27,6 +27,14 @@ struct InputFrame {
 	float vertical;
 };
 
+struct VertexData {
+	XMFLOAT3 vertices[24];
+	int numIndices;
+	XMFLOAT2 uv[24];
+	int triangles[36];
+	int numTriangles;
+};
+
 class BaseObject
 {
 private:
@@ -41,7 +49,11 @@ private:
 	bool mCollisionEnabled;
 	bool mHoveringEnabled;
 	bool mHovered;
-	BoundingBox* pBoundingBox = 0;
+	bool mDrawOBB;
+	bool mDrawAABB;
+	BoundingBox* pOBB = 0;
+	BoundingBox* pAABB = 0;
+	VertexData VerticesFromBoundingBox(BoundingBox* pBoundingBox);
 protected:
 	const char* pModelPath;
 	WCHAR* pMaterialPath;
@@ -103,16 +115,24 @@ public:
 	void EnableHovering(bool enabled);
 	bool GetCollisionsEnabled();
 	bool GetHoveringEnabled();
-	void ComputeBoundingBox();
+	void ComputeOBB();
+	void ComputeAABB();
 	virtual void DoClick();
 	virtual void DoHoverStart();
 	virtual void DoHoverEnd();
 	bool IsHovered();
 	void SetHovered(bool);
 
+	bool GetDrawOBB();
+	bool GetDrawAABB();
+	void SetDrawOBB(bool);
+	void SetDrawAABB(bool);
 	CollisionUtils* pCollisionUtil;
 
 	bool mUseOrientationMatrix = false;
 	XMMATRIX mOrientationMatrix;
+
+	BumpModelClass* pOBBModel = 0;
+	BumpModelClass* pAABBModel = 0;
 };
 

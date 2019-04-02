@@ -55,6 +55,8 @@ public:
 	void TurnZBufferOff();
 	void TurnOnAlphaBlending();
 	void TurnOffAlphaBlending();
+	void TurnOnWireframe();
+	void TurnOffWireframe();
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;

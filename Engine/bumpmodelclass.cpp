@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "bumpmodelclass.h"
+#include "BaseObject.h";
 
 BumpModelClass::BumpModelClass()
 {
@@ -25,7 +26,6 @@ BumpModelClass::BumpModelClass(const BumpModelClass& other)
 BumpModelClass::~BumpModelClass()
 {
 }
-
 
 bool BumpModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2)
 {
@@ -73,6 +73,37 @@ bool BumpModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR
 	return true;
 }
 
+bool BumpModelClass::InitializeFromVertexArray(ID3D11Device * device, VertexData data, WCHAR * textureFilename1)
+{
+	bool result;
+
+	// Load in the model data,
+	result = LoadModelFromVertices(data);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Calculate the tangent and binormal vectors for the model.
+	CalculateModelVectors();
+
+	// Initialize the vertex and index buffers.
+	result = InitializeBuffers(device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the textures for this model.
+	result = LoadTextures(device, textureFilename1, textureFilename1);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 void BumpModelClass::Shutdown()
 {
@@ -105,6 +136,21 @@ int BumpModelClass::GetIndexCount()
 
 int BumpModelClass::GetVertexCount() {
 	return m_vertexCount;
+}
+
+void BumpModelClass::SetIndexCount(int count)
+{
+	m_indexCount = count;
+}
+
+void BumpModelClass::SetVertexCount(int count)
+{
+	m_vertexCount = count;
+}
+
+void BumpModelClass::InitializeModel()
+{
+	m_model = new ModelType[m_vertexCount];
 }
 
 
@@ -467,6 +513,47 @@ bool BumpModelClass::LoadModelOBJ(char* filename)
 		LoadFaceToModel(placeIndex++, verts[face.v1.v], uvs[face.v1.vt], normals[face.v1.vn]);
 		LoadFaceToModel(placeIndex++, verts[face.v2.v], uvs[face.v2.vt], normals[face.v2.vn]);
 		LoadFaceToModel(placeIndex++, verts[face.v3.v], uvs[face.v3.vt], normals[face.v3.vn]);
+	}
+
+	return true;
+}
+
+bool BumpModelClass::LoadModelFromVertices(VertexData data)
+{
+	int indexCount = data.numIndices;
+	int triangleCount = data.numTriangles;
+
+	if (triangleCount % 3 != 0) { return false; }
+
+	m_vertexCount = indexCount;
+	m_indexCount = m_vertexCount;
+	m_model = new ModelType[m_vertexCount];
+
+	int placeIndex = 0;
+
+
+	for (int i = 0; i < m_vertexCount / 3; i++) {
+		int i1 = data.triangles[i];
+		int i2 = data.triangles[i + 1];
+		int i3 = data.triangles[i + 3];
+
+		XMFLOAT3 vert1 = data.vertices[i1];
+		XMFLOAT3 vert2 = data.vertices[i2];
+		XMFLOAT3 vert3 = data.vertices[i3];
+
+		// Calculate the triangle normal using the cross product of two of the triangles edges
+		XMFLOAT3 triEdge1 = XMFLOAT3(vert1.x - vert2.x, vert1.y - vert2.y, vert1.z - vert2.z);
+		XMFLOAT3 triEdge2 = XMFLOAT3(vert3.x - vert2.x, vert3.y - vert2.y, vert3.z - vert2.z);
+		XMVECTOR triEdgeVec1 = XMVector3Normalize(XMLoadFloat3(&triEdge1));
+		XMVECTOR triEdgeVec2 = XMVector3Normalize(XMLoadFloat3(&triEdge2));
+
+		XMVECTOR upVector = XMVector3Cross(triEdgeVec1, triEdgeVec2);
+		XMFLOAT3 normal;
+		XMStoreFloat3(&normal, upVector);
+
+		LoadFaceToModel(placeIndex++, vert1, data.uv[i1], normal);
+		LoadFaceToModel(placeIndex++, vert2, data.uv[i2], normal);
+		LoadFaceToModel(placeIndex++, vert3, data.uv[i3], normal);
 	}
 
 	return true;

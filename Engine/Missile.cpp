@@ -41,13 +41,11 @@ void Missile::OnRender(float DeltaTime)
 		//mOrientationMatrix = lookAtMatrix;
 		// mOrientationMatrix = MathUtil::DirectionToOrientation(*pPosition, direction);
 
-		float angleX = acos(pPosition->x / pTarget->pPosition->x);
-		float angleY = acos(pPosition->y / pTarget->pPosition->y);
-		float angleZ = acos(pPosition->z / pTarget->pPosition->z);
-
 		float radToDeg = 57.2958f;
 
-		// SetAngle(angleX * radToDeg, angleY * radToDeg, angleZ * radToDeg);
+		//XMFLOAT3 directionAngle = MathUtil::MultiplyFloat3(direction, 360.f);
+		XMFLOAT3 directionAngle = MathUtil::DirectionAngle(direction);
+		SetAngle(0.f, -directionAngle.z, -directionAngle.y);
 
 		float time = timeGetTime();
 		if (time - lastParticle > 100.f) {

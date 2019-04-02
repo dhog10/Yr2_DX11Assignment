@@ -17,6 +17,10 @@ Ship::Ship(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* 
 
 	lastCameraPosition = XMFLOAT3(0, 0, 0);
 	lastShipDirection = XMFLOAT3(0, 0, 0);
+
+	renderShader = RenderShader::SHADED_NO_BUMP;
+
+	SetDrawOBB(true);
 }
 
 Ship::~Ship()
@@ -55,7 +59,6 @@ void Ship::OnRender(float deltaTime)
 		pWorld->pCameraPosition = new XMFLOAT3(lastCameraPosition.x, lastCameraPosition.y, lastCameraPosition.z);
 		pWorld->mCameraMovementEnabled = false;
 
-
 		lastShipDirection = MathUtil::AddFloat3(lastShipDirection, MathUtil::MultiplyFloat3(MathUtil::SubtractFloat3(cameraDirection, lastShipDirection), 0.1f));
 		MathUtil::DivideFloat3(lastShipDirection, 180.f);
 		XMFLOAT3 newAngle = MathUtil::DirectionAngle(lastShipDirection);
@@ -64,6 +67,7 @@ void Ship::OnRender(float deltaTime)
 		std::string text = "\n\nCam Dir: " + std::to_string(cameraDirection.x) + " | " + std::to_string(cameraDirection.y) + " | " + std::to_string(cameraDirection.z)
 			+ "\nCam Ang: " + std::to_string(camAng.x) + " | " + std::to_string(camAng.y) + " | " + std::to_string(camAng.z)
 			+ "\nDirection: " + std::to_string(direction.x) + "|" + std::to_string(direction.y) + "|" + std::to_string(direction.z)
+			+ "\Pos: " + std::to_string(pPosition->x) + "|" + std::to_string(pPosition->y) + "|" + std::to_string(pPosition->z)
 			+ "\nSpeed: " + std::to_string(mSpeed)
 			+ "\n Particles: " + std::to_string(pWorld->pParticleSystem->GetNumParticles());
 		pWorld->pGraphicsClass->RenderText(text);
