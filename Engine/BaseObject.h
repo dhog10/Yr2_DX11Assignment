@@ -28,9 +28,9 @@ struct InputFrame {
 };
 
 struct VertexData {
-	XMFLOAT3 vertices[24];
+	XMFLOAT3 vertices[8];
 	int numIndices;
-	XMFLOAT2 uv[24];
+	XMFLOAT2 uv[8];
 	int triangles[36];
 	int numTriangles;
 };
@@ -51,9 +51,9 @@ private:
 	bool mHovered;
 	bool mDrawOBB;
 	bool mDrawAABB;
-	BoundingBox* pOBB = 0;
-	BoundingBox* pAABB = 0;
-	VertexData VerticesFromBoundingBox(BoundingBox* pBoundingBox);
+	ObjectBoundingBox* pOBB = 0;
+	ObjectBoundingBox* pAABB = 0;
+	VertexData VerticesFromBoundingBox(ObjectBoundingBox* pBoundingBox);
 protected:
 	const char* pModelPath;
 	WCHAR* pMaterialPath;
@@ -78,6 +78,7 @@ public:
 	void SetParent(BaseObject* pParent);
 	BaseObject* GetParent();
 	XMMATRIX GetWorldMatrix(XMMATRIX origin);
+	XMMATRIX GetWorldMatrix(XMMATRIX origin, bool useRotation);
 
 	RenderShader renderShader;
 

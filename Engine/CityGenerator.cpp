@@ -510,6 +510,7 @@ void CityGenerator::AddCar(char* model, WCHAR* material, float scale, float yaw)
 
 void CityGenerator::Think(World* pWorld) {
 	if (this->pCarTypes->size() == 0) { return; }
+	if (!mActive) { return; }
 
 	float time = timeGetTime();
 
@@ -540,8 +541,6 @@ void CityGenerator::Think(World* pWorld) {
 
 	if (time < LastCarSpawn + 1000) { return; }
 	LastCarSpawn = time;
-
-	if (!mActive) { return; }
 
 	if (this->pCarTypes->size() < this->MaxCars) {
 		for (int x = 0; x < NumRoads; x++) {

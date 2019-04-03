@@ -2,17 +2,17 @@
 
 
 
-BoundingBox::BoundingBox()
+ObjectBoundingBox::ObjectBoundingBox()
 {
 }
 
-BoundingBox::BoundingBox(XMFLOAT3* pMins, XMFLOAT3* pMaxs) {
+ObjectBoundingBox::ObjectBoundingBox(XMFLOAT3* pMins, XMFLOAT3* pMaxs) {
 	this->pMins = pMins;
 	this->pMaxs = pMaxs;
 }
 
 
-BoundingBox::~BoundingBox()
+ObjectBoundingBox::~ObjectBoundingBox()
 {
 	delete pMins;
 	delete pMaxs;

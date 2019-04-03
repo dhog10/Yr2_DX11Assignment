@@ -21,6 +21,7 @@ Ship::Ship(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* 
 	renderShader = RenderShader::SHADED_NO_BUMP;
 
 	SetDrawOBB(true);
+	SetDrawAABB(true);
 }
 
 Ship::~Ship()

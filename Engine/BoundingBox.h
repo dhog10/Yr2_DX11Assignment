@@ -2,12 +2,12 @@
 
 #include "d3dclass.h"
 
-class BoundingBox
+class ObjectBoundingBox
 {
 public:
-	BoundingBox();
-	BoundingBox(XMFLOAT3*, XMFLOAT3*);
-	~BoundingBox();
+	ObjectBoundingBox();
+	ObjectBoundingBox(XMFLOAT3*, XMFLOAT3*);
+	~ObjectBoundingBox();
 	
 	XMFLOAT3* pMins;
 	XMFLOAT3* pMaxs;

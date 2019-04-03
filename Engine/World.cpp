@@ -139,8 +139,8 @@ World::World()
 	pGenerator->CrossRoadsModel = "../Engine/data/city/roads/road_2_lane_x.obj";
 	pGenerator->CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
 
-	pGenerator->mActive = true;
-	pGenerator->GenerateWorld(this);
+	pGenerator->mActive = false;
+	// pGenerator->GenerateWorld(this);
 
 	this->pCityGenerator = pGenerator;
 

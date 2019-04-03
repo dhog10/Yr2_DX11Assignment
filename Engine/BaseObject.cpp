@@ -6,6 +6,8 @@ Author: Daniel Lush
 Date: 13/12/2018
 */
 
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
 #include "BaseObject.h"
 #include "World.h"
 #include "graphicsclass.h"
@@ -13,114 +15,85 @@ Date: 13/12/2018
 // The base object class is a generic class which contains information which all objects can use for common purposes
 // This reduces the amount of repeated code and allows for faster addition of many objects
 
-VertexData BaseObject::VerticesFromBoundingBox(BoundingBox * pBoundingBox)
+VertexData BaseObject::VerticesFromBoundingBox(ObjectBoundingBox * pBoundingBox)
 {
-
 	XMFLOAT3 min = *pBoundingBox->pMins;
 	XMFLOAT3 max = *pBoundingBox->pMaxs;
 	XMFLOAT3 diff = XMFLOAT3(max.x - min.x, max.y - min.y, max.z - min.z);
 
 	VertexData data = VertexData();
-	data.numIndices = 24;
+	data.numIndices = 8;
 	data.numTriangles = 36;
 
-	data.vertices[0] = XMFLOAT3(0, 0, 0);//side1
-	data.uv[0] = XMFLOAT2(1 / 6.f, 0);
-	data.vertices[1] = XMFLOAT3(diff.x, 0, 0);//side1
-	data.uv[1] = XMFLOAT2(0 / 6.f, 0);
-	data.vertices[2] = XMFLOAT3(0, diff.y, 0);//side1
-	data.uv[2] = XMFLOAT2(1 / 6.f, 1);
-	data.vertices[4] = XMFLOAT3(diff.x, diff.y, 0);//side1
-	data.uv[4] = XMFLOAT2(0 / 6.f, 1);
-	data.vertices[3] = XMFLOAT3(0, 0, diff.z); //side2
-	data.uv[3] = XMFLOAT2(1 / 6.f, 0);
-	data.vertices[8] = XMFLOAT3(0, diff.y, 0); //side2
-	data.uv[8] = XMFLOAT2(2 / 6.f, 1);
-	data.vertices[5] = XMFLOAT3(0, diff.y, diff.z);//side2
-	data.uv[5] = XMFLOAT2(1 / 6.f, 1);
-	data.vertices[9] = XMFLOAT3(0, 0, 0);//side2
-	data.uv[9] = XMFLOAT2(2 / 6.f, 0);
-	data.vertices[10] = XMFLOAT3(0, diff.y, diff.z);//side3
-	data.uv[10] = XMFLOAT2(3 / 6.f, 1);
-	data.vertices[6] = XMFLOAT3(diff.x, 0, diff.z);//side3
-	data.uv[6] = XMFLOAT2(2 / 6.f, 0);
-	data.vertices[7] = XMFLOAT3(diff.x, diff.y, diff.z);//side3
-	data.uv[7] = XMFLOAT2(2 / 6.f, 1);
-	data.vertices[11] = XMFLOAT3(0, 0, diff.z);//side3
-	data.uv[11] = XMFLOAT2(3 / 6.f, 0);
-	data.vertices[12] = XMFLOAT3(diff.x, diff.y, diff.z);//side4
-	data.uv[12] = XMFLOAT2(4 / 6.f, 1);
-	data.vertices[13] = XMFLOAT3(diff.x, 0, diff.z);//side4
-	data.uv[13] = XMFLOAT2(4 / 6.f, 0);
-	data.vertices[14] = XMFLOAT3(diff.x, diff.y, 0);//side4
-	data.uv[14] = XMFLOAT2(3 / 6.f, 1);
-	data.vertices[15] = XMFLOAT3(diff.x, 0, 0);//side4
-	data.uv[15] = XMFLOAT2(3 / 6.f, 0);
-	data.vertices[16] = XMFLOAT3(0, 0, 0);//bottom
-	data.uv[16] = XMFLOAT2(5 / 6.f, 0);
-	data.vertices[17] = XMFLOAT3(diff.x, 0, diff.z);//bottom
-	data.uv[17] = XMFLOAT2(4 / 6.f, 1);
-	data.vertices[18] = XMFLOAT3(0, 0, diff.z);//bottom
-	data.uv[18] = XMFLOAT2(5 / 6.f, 1);
-	data.vertices[19] = XMFLOAT3(diff.x, 0, 0);//bottom
-	data.uv[19] = XMFLOAT2(4 / 6.f, 0);
-	data.vertices[20] = XMFLOAT3(diff.x, diff.y, diff.z);//top
-	data.uv[20] = XMFLOAT2(1, 1);
-	data.vertices[21] = XMFLOAT3(0, diff.y, 0); //top
-	data.uv[21] = XMFLOAT2(5 / 6.f, 0);
-	data.vertices[22] = XMFLOAT3(0, diff.y, diff.z);//top
-	data.uv[22] = XMFLOAT2(5 / 6.f, 1);
-	data.vertices[23] = XMFLOAT3(diff.x, diff.y, 0);//top
-	data.uv[23] = XMFLOAT2(1, 0);//top
+	data.vertices[0] = XMFLOAT3(0, 0, 0);
+	data.uv[0] = XMFLOAT2(0, 0);
+	data.vertices[1] = XMFLOAT3(diff.x, 0, 0);
+	data.uv[1] = XMFLOAT2(1, 0);
+	data.vertices[2] = XMFLOAT3(diff.x, diff.y, 0);
+	data.uv[2] = XMFLOAT2(1, 1);
+	data.vertices[3] = XMFLOAT3(0, diff.y, 0);
+	data.uv[3] = XMFLOAT2(0, 1);
+	data.vertices[4] = XMFLOAT3(0, diff.y, diff.z);
+	data.uv[4] = XMFLOAT2(0, 0);
+	data.vertices[5] = XMFLOAT3(diff.x, diff.y, diff.z);
+	data.uv[5] = XMFLOAT2(1, 0);
+	data.vertices[6] = XMFLOAT3(diff.x, 0, diff.z);
+	data.uv[6] = XMFLOAT2(1, 1);
+	data.vertices[7] = XMFLOAT3(0, 0, diff.z);
+	data.uv[7] = XMFLOAT2(1, 1);
 
-	for (int i = 0; i < 24; i++) {
+	for (int i = 0; i < data.numIndices; i++) {
 		XMFLOAT3 hd = XMFLOAT3(diff.x * 0.5f, diff.y * 0.5f, diff.z * 0.5f);
 		data.vertices[i] = XMFLOAT3(data.vertices[i].x - hd.x, data.vertices[i].y - hd.y, data.vertices[i].z - hd.z);
 	}
 
-	//sides
-	//side1
-	data.triangles[0] = 2;
-	data.triangles[1] = 1;
-	data.triangles[2] = 0;
-	data.triangles[3] = 1;
-	data.triangles[4] = 2;
-	data.triangles[5] = 4;
-	//side2
-	data.triangles[6] = 3;
-	data.triangles[7] = 8;
-	data.triangles[8] = 9;
-	data.triangles[9] = 5;
-	data.triangles[10] = 8;
-	data.triangles[11] = 3;
-	//side3
-	data.triangles[12] = 10;
-	data.triangles[13] = 6;
-	data.triangles[14] = 7;
-	data.triangles[15] = 11;
-	data.triangles[16] = 6;
-	data.triangles[17] = 10;
-	//side4
-	data.triangles[18] = 12;
-	data.triangles[19] = 13;
-	data.triangles[20] = 14;
-	data.triangles[21] = 14;
-	data.triangles[22] = 13;
-	data.triangles[23] = 15;
-	//bottom
-	data.triangles[24] = 16;
-	data.triangles[25] = 17;
-	data.triangles[26] = 18;
-	data.triangles[27] = 19;
-	data.triangles[28] = 17;
-	data.triangles[29] = 16;
-	//top
-	data.triangles[30] = 22;
-	data.triangles[31] = 20;
-	data.triangles[32] = 21;
-	data.triangles[33] = 21;
-	data.triangles[34] = 20;
-	data.triangles[35] = 23;
+	data.triangles[0] = 0;
+	data.triangles[1] = 2;
+	data.triangles[2] = 1;
+
+	data.triangles[3] = 0;
+	data.triangles[4] = 3;
+	data.triangles[5] = 2;
+
+	data.triangles[6] = 2;
+	data.triangles[7] = 3;
+	data.triangles[8] = 4;
+
+	data.triangles[9] = 2;
+	data.triangles[10] = 4;
+	data.triangles[11] = 5;
+
+	data.triangles[12] = 1;
+	data.triangles[13] = 2;
+	data.triangles[14] = 5;
+
+	data.triangles[15] = 1;
+	data.triangles[16] = 5;
+	data.triangles[17] = 6;
+
+	data.triangles[18] = 0;
+	data.triangles[19] = 7;
+	data.triangles[20] = 4;
+
+	data.triangles[21] = 0;
+	data.triangles[22] = 4;
+	data.triangles[23] = 3;
+
+	data.triangles[24] = 5;
+	data.triangles[25] = 4;
+	data.triangles[26] = 7;
+
+	data.triangles[27] = 5;
+	data.triangles[28] = 7;
+	data.triangles[29] = 6;
+
+	data.triangles[30] = 0;
+	data.triangles[31] = 6;
+	data.triangles[32] = 7;
+
+	data.triangles[33] = 0;
+	data.triangles[34] = 1;
+	data.triangles[35] = 6;
 
 	return data;
 }
@@ -356,11 +329,16 @@ XMMATRIX CalculateWorldPosition(XMMATRIX* pOrigin, BaseObject* pObject, bool don
 	return origin;
 }
 
+XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin)
+{
+	return GetWorldMatrix(origin, true);
+}
+
 // This returns the world matrix of the object, taking into account its parent (if it has one)
-XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin) {
+XMMATRIX BaseObject::GetWorldMatrix(XMMATRIX origin, bool useRotation) {
 	
 	origin = XMMatrixScaling(pScale->x, pScale->y, pScale->z);
-	origin = CalculateWorldPosition(&origin, this, false);
+	origin = CalculateWorldPosition(&origin, this, !useRotation);
 
 	if (mUseOrientationMatrix) {
 		return mOrientationMatrix;
@@ -377,6 +355,10 @@ void BaseObject::SetAngle(float p, float y, float r) {
 	float DegToRad = 0.0174533f;
 
 	pAngle = new XMFLOAT3(p * DegToRad, y * DegToRad, r * DegToRad);
+
+	if (pAABBModel != 0) {
+		ComputeAABB();
+	}
 }
 
 XMFLOAT3 BaseObject::GetAngle() {
@@ -454,7 +436,7 @@ void BaseObject::ComputeOBB() {
 	}
 	
 
-	pOBB = new BoundingBox(pMins, pMaxs);
+	pOBB = new ObjectBoundingBox(pMins, pMaxs);
 
 	pOBBModel = new BumpModelClass;
 	VertexData data = VerticesFromBoundingBox(pOBB);
@@ -481,46 +463,38 @@ void BaseObject::ComputeAABB()
 
 	// pAABBModel = new BumpModelClass;
 
-	XMFLOAT3* pMins = new XMFLOAT3(99999999, 99999999, 99999999);
-	XMFLOAT3* pMaxs = new XMFLOAT3(-99999999, -99999999, -99999999);
+	XMFLOAT3* pMins = pOBB->pMins;
+	XMFLOAT3* pMaxs = pOBB->pMaxs;
+	XMFLOAT3 translation = XMFLOAT3(0, 0, 0);
 
+	XMVECTOR minVector = XMLoadFloat3(pMins);
+	XMVECTOR maxVector = XMLoadFloat3(pMaxs);
 
-	// Calculate the min bounds translated
-	// Create a scaled and rotated matrix of our object
-	XMMATRIX objectMatrix = XMMatrixScaling(pScale->x, pScale->y, pScale->z);
-	TransformRotation(&objectMatrix, pAngle);
+	XMMATRIX rotationMatrix = XMMatrixScaling(1.f, 1.f, 1.f);
+	rotationMatrix = TransformRotation(&rotationMatrix, pAngle);
 
-	// Rather than translate by the object position, translate by the position of the vertex
-	XMMATRIX translateMatrix = XMMatrixTranslation(pOBB->pMins->x, pOBB->pMins->y, pOBB->pMins->z);
-	objectMatrix = XMMatrixMultiply(objectMatrix, translateMatrix);
+	BoundingBox aabb;
+	BoundingBox::CreateFromPoints(aabb, minVector, maxVector);
+	aabb.Transform(aabb, rotationMatrix);
 
-	XMVECTOR minVecTranslated = objectMatrix.r[3];
-
-
-	// Calculate the max bounds translated
-	objectMatrix = XMMatrixScaling(pScale->x, pScale->y, pScale->z);
-	TransformRotation(&objectMatrix, pAngle);
-
-	translateMatrix = XMMatrixTranslation(pOBB->pMaxs->x, pOBB->pMaxs->y, pOBB->pMaxs->z);
-	objectMatrix = XMMatrixMultiply(objectMatrix, translateMatrix);
-
-	XMVECTOR maxVecTranslated = objectMatrix.r[3];
-
-	XMFLOAT3 minFloat;
-	XMStoreFloat3(&minFloat, minVecTranslated);
-	XMFLOAT3 maxFloat;
-	XMStoreFloat3(&maxFloat, maxVecTranslated);
+	pMins = new XMFLOAT3(0, 0, 0);
+	pMaxs = new XMFLOAT3(aabb.Extents.x * 2.f, aabb.Extents.y * 2.f, aabb.Extents.z * 2.f);
 
 	// Calculate the mins and maxs of the AABB
-	pMins->x = min(minFloat.x, maxFloat.x);
-	pMins->y = min(minFloat.y, maxFloat.y);
-	pMins->z = min(minFloat.z, maxFloat.z);
+	pMins->x = min(pMins->x, pMaxs->x);
+	pMins->y = min(pMins->y, pMaxs->y);
+	pMins->z = min(pMins->z, pMaxs->z);
 
-	pMaxs->x = max(minFloat.x, maxFloat.x);
-	pMaxs->y = max(minFloat.y, maxFloat.y);
-	pMaxs->z = max(minFloat.z, maxFloat.z);
+	pMaxs->x = max(pMins->x, pMaxs->x);
+	pMaxs->y = max(pMins->y, pMaxs->y);
+	pMaxs->z = max(pMins->z, pMaxs->z);
 
-	pAABB = new BoundingBox(pMins, pMaxs);
+	pAABB = new ObjectBoundingBox(pMins, pMaxs);
+
+	pAABBModel = new BumpModelClass;
+	VertexData data = VerticesFromBoundingBox(pAABB);
+
+	pAABBModel->InitializeFromVertexArray(pWorld->pGraphicsClass->m_D3D->GetDevice(), data, L"../Engine/data/white.dds");
 }
 
 void BaseObject::DoClick() {

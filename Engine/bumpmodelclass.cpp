@@ -525,17 +525,17 @@ bool BumpModelClass::LoadModelFromVertices(VertexData data)
 
 	if (triangleCount % 3 != 0) { return false; }
 
-	m_vertexCount = indexCount;
+	m_vertexCount = triangleCount;
 	m_indexCount = m_vertexCount;
 	m_model = new ModelType[m_vertexCount];
 
 	int placeIndex = 0;
 
 
-	for (int i = 0; i < m_vertexCount / 3; i++) {
+	for (int i = 0; i < m_vertexCount; i += 3) {
 		int i1 = data.triangles[i];
 		int i2 = data.triangles[i + 1];
-		int i3 = data.triangles[i + 3];
+		int i3 = data.triangles[i + 2];
 
 		XMFLOAT3 vert1 = data.vertices[i1];
 		XMFLOAT3 vert2 = data.vertices[i2];

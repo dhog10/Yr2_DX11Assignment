@@ -596,16 +596,24 @@ bool GraphicsClass::Render(float rotation)
 				break;
 			}
 
-			if (pObject->GetDrawOBB()) {
-				// m_D3D->TurnOnWireframe();
+			if (false && pObject->GetDrawOBB()) {
+				m_D3D->TurnOnWireframe();
 				pObject->pOBBModel->Render(m_D3D->GetDeviceContext());
 				bool success = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pObject->pOBBModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 					pObject->pOBBModel->GetColorTexture());
-				// m_D3D->TurnOffWireframe();
+				m_D3D->TurnOffWireframe();
 			}
 
 			if (pObject->GetDrawAABB()) {
+				// Get non rotated object matrix for AABB
+				XMMATRIX tempWorldMatrix = XMMatrixScaling(1.f, 1.f, 1.f);
+				XMMATRIX AABBMatrix = pObject->GetWorldMatrix(tempWorldMatrix, false);
 
+				m_D3D->TurnOnWireframe();
+				pObject->pAABBModel->Render(m_D3D->GetDeviceContext());
+				bool success = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pObject->pAABBModel->GetIndexCount(), AABBMatrix, viewMatrix, projectionMatrix,
+					pObject->pAABBModel->GetColorTexture());
+				m_D3D->TurnOffWireframe();
 			}
 
 			// If mouse clicked and object collisions enabled, check if object was clicked
