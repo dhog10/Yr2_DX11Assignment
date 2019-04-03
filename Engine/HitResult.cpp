@@ -80,7 +80,7 @@ HitResult * HitResult::AABB_AABB(BaseObject * a, BaseObject * b)
 	HitResult* pHitResult = new HitResult();
 	pHitResult->mHitDepth = 0.f;
 	pHitResult->mHitPos = MathUtil::AddFloat3(*pPosA, extA);
-	pHitResult->mNormal = MathUtil::Normalize(MathUtil::SubtractFloat3(*pPosB, *pPosA));
+	pHitResult->mNormal = MathUtil::Normalize(MathUtil::SubtractFloat3(*pPosA, *pPosB));
 
 	return pHitResult;
 }

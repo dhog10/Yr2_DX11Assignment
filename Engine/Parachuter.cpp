@@ -6,6 +6,9 @@ Parachuter::Parachuter(const char* Name, const char* ModelPath, WCHAR* MaterialP
 {
 	mCollisionRadius = 30;
 
+	SetDrawAABB(true);
+	EnableCollisions(true);
+
 	mStatic = true;
 }
 
@@ -30,10 +33,8 @@ void Parachuter::OnRender(float deltaTime)
 	if (pPosition->y < 10) {
 		Destroy();
 
-		pWorld->mHealth--;
-
-		if (pWorld->mHealth <= 0) {
-
+		if (pWorld->mHealth > 0) {
+			pWorld->mHealth--;
 		}
 	}
 }
