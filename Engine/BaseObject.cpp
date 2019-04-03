@@ -11,11 +11,12 @@ Date: 13/12/2018
 #include "BaseObject.h"
 #include "World.h"
 #include "graphicsclass.h"
+#include "HitResult.h"
 
 // The base object class is a generic class which contains information which all objects can use for common purposes
 // This reduces the amount of repeated code and allows for faster addition of many objects
 
-VertexData BaseObject::VerticesFromBoundingBox(ObjectBoundingBox * pBoundingBox)
+VertexData BaseObject::VerticesFromBoundingBox(ObjectBoundingBox * pBoundingBox, bool shiftOrigin)
 {
 	XMFLOAT3 min = *pBoundingBox->pMins;
 	XMFLOAT3 max = *pBoundingBox->pMaxs;
@@ -42,9 +43,12 @@ VertexData BaseObject::VerticesFromBoundingBox(ObjectBoundingBox * pBoundingBox)
 	data.vertices[7] = XMFLOAT3(0, 0, diff.z);
 	data.uv[7] = XMFLOAT2(1, 1);
 
-	for (int i = 0; i < data.numIndices; i++) {
-		XMFLOAT3 hd = XMFLOAT3(diff.x * 0.5f, diff.y * 0.5f, diff.z * 0.5f);
-		data.vertices[i] = XMFLOAT3(data.vertices[i].x - hd.x, data.vertices[i].y - hd.y, data.vertices[i].z - hd.z);
+	if (shiftOrigin) {
+		for (int i = 0; i < data.numIndices; i++) {
+
+			XMFLOAT3 hd = XMFLOAT3(min.x, min.y, min.z);
+			data.vertices[i] = XMFLOAT3(data.vertices[i].x + hd.x, data.vertices[i].y + hd.y, data.vertices[i].z + hd.z);
+		}
 	}
 
 	data.triangles[0] = 0;
@@ -128,7 +132,7 @@ BaseObject::BaseObject(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	mDrawOBB = false;
 	mDrawAABB = false;
 
-	pWorld = 0;
+	pWorld = NULL;
 }
 
 // Initialize the object, set stored materials and initialize the model
@@ -372,7 +376,7 @@ XMFLOAT3 BaseObject::GetAngle() {
 void BaseObject::EnableCollisions(bool enabled) {
 	mCollisionEnabled = enabled;
 
-	if (pWorld != NULL && enabled) {
+	if (pWorld != NULL && pWorld->pGraphicsClass != NULL && enabled) {
 		ComputeOBB();
 		ComputeAABB();
 
@@ -407,7 +411,7 @@ bool BaseObject::GetHoveringEnabled()
 }
 
 void BaseObject::ComputeOBB() {
-	if (pWorld == NULL) { return; }
+	if (pWorld == NULL || pWorld->pGraphicsClass == NULL) { return; }
 
 	if (pOBB != 0) {
 		delete pOBB;
@@ -439,14 +443,14 @@ void BaseObject::ComputeOBB() {
 	pOBB = new ObjectBoundingBox(pMins, pMaxs);
 
 	pOBBModel = new BumpModelClass;
-	VertexData data = VerticesFromBoundingBox(pOBB);
+	VertexData data = VerticesFromBoundingBox(pOBB, true);
 
 	pOBBModel->InitializeFromVertexArray(pWorld->pGraphicsClass->m_D3D->GetDevice(), data, L"../Engine/data/white.dds");
 }
 
 void BaseObject::ComputeAABB()
 {
-	if (pWorld == NULL) { return; }
+	if (pWorld == NULL || pWorld->pGraphicsClass == NULL) { return; }
 
 	if (pOBB == 0) {
 		ComputeOBB();
@@ -477,8 +481,8 @@ void BaseObject::ComputeAABB()
 	BoundingBox::CreateFromPoints(aabb, minVector, maxVector);
 	aabb.Transform(aabb, rotationMatrix);
 
-	pMins = new XMFLOAT3(0, 0, 0);
-	pMaxs = new XMFLOAT3(aabb.Extents.x * 2.f, aabb.Extents.y * 2.f, aabb.Extents.z * 2.f);
+	pMins = new XMFLOAT3(-aabb.Extents.x + aabb.Center.x, -aabb.Extents.y + aabb.Center.y, -aabb.Extents.z + aabb.Center.z);
+	pMaxs = new XMFLOAT3(aabb.Extents.x + aabb.Center.x, aabb.Extents.y + aabb.Center.y, aabb.Extents.z + aabb.Center.z);
 
 	// Calculate the mins and maxs of the AABB
 	pMins->x = min(pMins->x, pMaxs->x);
@@ -492,7 +496,7 @@ void BaseObject::ComputeAABB()
 	pAABB = new ObjectBoundingBox(pMins, pMaxs);
 
 	pAABBModel = new BumpModelClass;
-	VertexData data = VerticesFromBoundingBox(pAABB);
+	VertexData data = VerticesFromBoundingBox(pAABB, true);
 
 	pAABBModel->InitializeFromVertexArray(pWorld->pGraphicsClass->m_D3D->GetDevice(), data, L"../Engine/data/white.dds");
 }
@@ -506,6 +510,10 @@ void BaseObject::DoHoverStart()
 }
 
 void BaseObject::DoHoverEnd()
+{
+}
+
+void BaseObject::OnCollide(BaseObject * pOther, HitResult * pHitResult)
 {
 }
 
@@ -554,4 +562,26 @@ void BaseObject::SetDrawAABB(bool draw)
 	if (draw) {
 		ComputeAABB();
 	}
+}
+
+HitResult* BaseObject::ResolveCollisions()
+{
+	std::vector<BaseObject*> objects = *pWorld->GetObjects();
+
+	for (int i = 0; i < objects.size(); i++) {
+		BaseObject* pObject = objects[i];
+
+		if (pObject == this) { continue; }
+		if (!pObject->GetCollisionsEnabled()) { continue; }
+
+		HitResult* pHitResult = HitResult::AABB_AABB(this, pObject);
+		if (pHitResult != NULL) {
+			HitResult::ResolveCollision(pHitResult, this, pObject);
+			OnCollide(pObject, pHitResult);
+			return pHitResult;
+			break;
+		}
+	}
+
+	return NULL;
 }

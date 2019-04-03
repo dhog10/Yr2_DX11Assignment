@@ -10,6 +10,7 @@ public:
 
 	virtual void DoClick();
 	virtual void OnRender(float DeltaTime);
+	virtual void OnCollide(BaseObject* pOther, HitResult* pHitResult);
 
 	float mMissileSpeed;
 	BaseObject* pTarget;

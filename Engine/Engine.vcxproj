@@ -41,6 +41,7 @@
     <ClInclude Include="FW1Library\Source\FW1FontWrapper.h" />
     <ClInclude Include="FW1Library\Source\FW1Precompiled.h" />
     <ClInclude Include="graphicsclass.h" />
+    <ClInclude Include="HitResult.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightshaderclass.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="FW1Library\Source\FW1FontWrapper.cpp" />
     <ClCompile Include="FW1Library\Source\FW1Precompiled.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
+    <ClCompile Include="HitResult.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="lightshaderclass.cpp" />

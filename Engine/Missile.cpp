@@ -12,6 +12,11 @@ Missile::Missile(const char * Name, const char * ModelPath, WCHAR * MaterialPath
 
 	mMissileSpeed = 120.f;
 	SetScale(0.2f);
+
+	EnableCollisions(true);
+	SetDrawAABB(true);
+
+	mStatic = true;
 }
 
 Missile::~Missile()
@@ -57,5 +62,30 @@ void Missile::OnRender(float DeltaTime)
 			pParticle->mScale = 1.f;
 
 		}
+
+		XMFLOAT3 diff = MathUtil::SubtractFloat3(*pTarget->pPosition, *pPosition);
+		float len = abs(diff.x) + abs(diff.y) + abs(diff.z);
+
+		if (!IsDestroyed() && len < 100) {
+			pTarget->Destroy();
+			pWorld->mScore++;
+			Destroy();
+		}
+
+		if (pTarget->IsDestroyed()) {
+			Destroy();
+		}
+	}
+	else {
+		Destroy();
+	}
+}
+
+void Missile::OnCollide(BaseObject * pOther, HitResult * pHitResult)
+{
+	if (pOther->GetName() == "Parachute") {
+		pOther->Destroy();
+		pWorld->mScore++;
+		Destroy();
 	}
 }

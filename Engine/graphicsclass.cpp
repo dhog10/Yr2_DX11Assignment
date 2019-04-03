@@ -362,6 +362,7 @@ void GraphicsClass::RenderText(std::string text)
 bool GraphicsClass::Render(float rotation)
 {
 	pWorld->Think();
+	pWorld->pGraphicsClass = this;
 
 	RECT wRect;
 	GetWindowRect(mHWnd, &wRect);
@@ -518,6 +519,12 @@ bool GraphicsClass::Render(float rotation)
 			BumpModelClass* pModelClass = pObject->pModelClass;
 			if (!pModelClass) { continue; }
 
+			// Resolve collisions linearly for objects with enabled collisions
+			// This is the naive approach, given more time I could implement a better collision resolution method
+			if (pObject->GetCollisionsEnabled() && !pObject->mStatic) {
+				pObject->ResolveCollisions();
+			}
+
 			objects[i]->pPosition->x += objects[i]->pVelocity->x * DeltaTime;
 			objects[i]->pPosition->y += objects[i]->pVelocity->y * DeltaTime;
 			objects[i]->pPosition->z += objects[i]->pVelocity->z * DeltaTime;
@@ -596,7 +603,7 @@ bool GraphicsClass::Render(float rotation)
 				break;
 			}
 
-			if (false && pObject->GetDrawOBB()) {
+			if (pObject->GetDrawOBB()) {
 				m_D3D->TurnOnWireframe();
 				pObject->pOBBModel->Render(m_D3D->GetDeviceContext());
 				bool success = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), pObject->pOBBModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,

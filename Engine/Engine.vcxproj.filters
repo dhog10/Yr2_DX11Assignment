@@ -34,6 +34,12 @@
     <Filter Include="FW1">
       <UniqueIdentifier>{85483570-2bd5-47a3-b780-2c210057167e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Collision">
+      <UniqueIdentifier>{1365a937-bce0-4d1c-a102-8e10ddda2206}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collision">
+      <UniqueIdentifier>{3ae14f80-9fd6-4ec2-9185-0e8f4d633da0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -185,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="HitResult.h">
+      <Filter>Header Files\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="HitResult.cpp">
+      <Filter>Source Files\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

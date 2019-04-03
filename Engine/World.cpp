@@ -83,6 +83,7 @@ World::World()
 {
 	mCameraMovementEnabled = true;
 	ModelCache = std::map<const char*, BumpModelClass*>();
+	pGraphicsClass = NULL;
 
 	CurrentID = 0;
 	Objects = new std::vector<BaseObject*>();
@@ -139,8 +140,8 @@ World::World()
 	pGenerator->CrossRoadsModel = "../Engine/data/city/roads/road_2_lane_x.obj";
 	pGenerator->CrossRoadsMaterial = L"../Engine/data/city/roads/road_2_lane_x.dds";
 
-	pGenerator->mActive = false;
-	// pGenerator->GenerateWorld(this);
+	pGenerator->mActive = true;
+	pGenerator->GenerateWorld(this);
 
 	this->pCityGenerator = pGenerator;
 
@@ -167,24 +168,6 @@ std::vector<BaseObject*>* World::GetObjects()
 {
 	return Objects;
 }
-
-// Create an object, and perform initialization to it
-
-/*template<class T>
-T* World::CreateObject(const char* Name, const char* ModelPath, WCHAR* MaterialPath, WCHAR* MaterialPath2)
-{
-	T* pObject = new T(Name, ModelPath, MaterialPath, MaterialPath2);
-	pObject->ID = CurrentID;
-	pObject->pWorld = this;
-	CurrentID++;
-
-	// Add to object array & call create functions
-	Objects->push_back((BaseObject*)pObject);
-
-	pObject->OnCreate();
-
-	return pObject;
-}*/
 
 // Remove an object from the world
 

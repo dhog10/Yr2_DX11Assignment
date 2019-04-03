@@ -22,6 +22,13 @@ CityGenerator::CityGenerator() {
 	LampModel = "../Engine/data/city/lamp.obj";
 	LampMaterial = L"../Engine/data/white.dds";
 
+	BuildingRenderOBB = false;
+	BuildingRenderAABB = true;
+	BuildingCollisionsEnabled = true;
+	LampCollisionsEnabled = false;
+	VehicleCollisionsEnabled = false;
+	RoadCollisionsEnabled = false;
+
 	// Initialize building types
 
 	AddBuilding("../Engine/data/city/buildings/building_1.obj",
@@ -176,11 +183,6 @@ CityGenerator::CityGenerator() {
 		L"../Engine/data/white.dds",
 		3.0f,
 		90.f);
-
-	BuildingCollisionsEnabled = false;
-	LampCollisionsEnabled = false;
-	VehicleCollisionsEnabled = false;
-	RoadCollisionsEnabled = false;
 }
 
 CityGenerator::~CityGenerator() {
@@ -329,9 +331,18 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->SetScale(building.Scale);
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin + building.YOffset);
+					buildingObject->mStatic = true;
 
 					if (GetBuildingCollisionsEnabled()) {
 						buildingObject->EnableCollisions(true);
+					}
+
+					if (BuildingRenderAABB) {
+						buildingObject->SetDrawAABB(true);
+					}
+
+					if (BuildingRenderOBB) {
+						buildingObject->SetDrawOBB(true);
 					}
 
 					c++;
@@ -380,9 +391,18 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + xProgress + building.XOffset, 0.f, yOrigin - building.YOffset + (RoadSegmentSize * (RoadLength - 1)));
 					buildingObject->SetAngle(0.f, 180.f, 0.f);
+					buildingObject->mStatic = true;
 					
 					if (GetBuildingCollisionsEnabled()) {
 						buildingObject->EnableCollisions(true);
+					}
+
+					if (BuildingRenderAABB) {
+						buildingObject->SetDrawAABB(true);
+					}
+
+					if (BuildingRenderOBB) {
+						buildingObject->SetDrawOBB(true);
 					}
 
 					c++;
@@ -425,9 +445,18 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin + building.YOffset + RoadSegmentSize, 0.f, yOrigin + xProgress + building.XOffset);
 					buildingObject->SetAngle(0.f, 90.f, 0.f);
+					buildingObject->mStatic = true;
 
 					if (GetBuildingCollisionsEnabled()) {
 						buildingObject->EnableCollisions(true);
+					}
+
+					if (BuildingRenderAABB) {
+						buildingObject->SetDrawAABB(true);
+					}
+
+					if (BuildingRenderOBB) {
+						buildingObject->SetDrawOBB(true);
 					}
 
 					int maxX = RoadSegmentSize * RoadLength * NumRoads;
@@ -473,9 +502,18 @@ void CityGenerator::GenerateWorld(World* pWorld) {
 					buildingObject->renderShader = buildingShader;
 					buildingObject->pPosition = new XMFLOAT3(xOrigin - building.YOffset + (RoadSegmentSize * RoadLength), 0.f, yOrigin + xProgress + building.XOffset);
 					buildingObject->SetAngle(0.f, -90.f, 0.f);
+					buildingObject->mStatic = true;
 
 					if (GetBuildingCollisionsEnabled()) {
 						buildingObject->EnableCollisions(true);
+					}
+
+					if (BuildingRenderAABB) {
+						buildingObject->SetDrawAABB(true);
+					}
+
+					if (BuildingRenderOBB) {
+						buildingObject->SetDrawOBB(true);
 					}
 
 					c++;
@@ -517,7 +555,7 @@ void CityGenerator::Think(World* pWorld) {
 	if (pWorld->GetGameState() == GameState::PLAY && time > lastParachuteSpawn + 1000) {
 		lastParachuteSpawn = time;
 
-		Parachuter* parachuter = pWorld->CreateObject<Parachuter>("Car",
+		Parachuter* parachuter = pWorld->CreateObject<Parachuter>("Parachuter",
 			"../Engine/data/parachute.obj",
 			L"../Engine/data/white.dds",
 			L"../Engine/data/white.dds");

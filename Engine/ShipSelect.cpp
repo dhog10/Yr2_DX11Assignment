@@ -8,6 +8,7 @@ ShipSelect::ShipSelect(const char* Name, const char* ModelPath, WCHAR* MaterialP
 	EnableCollisions(true);
 	EnableHovering(true);
 	mCollisionRadius = 80.f;
+	mStatic = true;
 }
 
 

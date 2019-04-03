@@ -51,9 +51,7 @@ private:
 	bool mHovered;
 	bool mDrawOBB;
 	bool mDrawAABB;
-	ObjectBoundingBox* pOBB = 0;
-	ObjectBoundingBox* pAABB = 0;
-	VertexData VerticesFromBoundingBox(ObjectBoundingBox* pBoundingBox);
+	VertexData VerticesFromBoundingBox(ObjectBoundingBox* pBoundingBox, bool shiftOrigin);
 protected:
 	const char* pModelPath;
 	WCHAR* pMaterialPath;
@@ -121,6 +119,7 @@ public:
 	virtual void DoClick();
 	virtual void DoHoverStart();
 	virtual void DoHoverEnd();
+	virtual void OnCollide(BaseObject* pOther, class HitResult* pHitResult);
 	bool IsHovered();
 	void SetHovered(bool);
 
@@ -135,5 +134,10 @@ public:
 
 	BumpModelClass* pOBBModel = 0;
 	BumpModelClass* pAABBModel = 0;
+	ObjectBoundingBox* pOBB = 0;
+	ObjectBoundingBox* pAABB = 0;
+
+	class HitResult* ResolveCollisions();
+	bool mStatic = false;
 };
 

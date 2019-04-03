@@ -50,6 +50,8 @@ private:
 	bool LampCollisionsEnabled;
 	bool VehicleCollisionsEnabled;
 	bool RoadCollisionsEnabled;
+	bool BuildingRenderAABB;
+	bool BuildingRenderOBB;
 public:
 	CityGenerator();
 	~CityGenerator();
